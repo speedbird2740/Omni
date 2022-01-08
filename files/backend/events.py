@@ -504,10 +504,6 @@ class events(commands.Cog):
 
             temp = 0
             msg = ""
-            raidconfig["log"].append({
-                "id": member.id,
-                "time": time.perf_counter()
-            })
             saveconfig({
                 f"guild.{hash}.config.antiraid.log.append": {"id": member.id, "time": time.perf_counter()}
             })
