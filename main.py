@@ -346,12 +346,6 @@ class restricted(commands.Cog):
                     botdata["afkmembers"].clear()
                     await ctx.send("Successfully cleared afk list!")
 
-            elif module == "gifs":
-                if value == "reset":
-                    await ctx.send("Reloading gifs...")
-                    getdata()
-                    await ctx.send("Successfully reloaded gifs!")
-
             elif module == "settings":
                 if value == "reset":
                     saveconfig({
