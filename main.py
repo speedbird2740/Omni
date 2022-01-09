@@ -15,7 +15,6 @@ from cryptography.fernet import Fernet
 from discord.ext import commands
 
 from files.backend.config_framework import listener, saveconfig, createconfig, gethash, loadconfig
-from files.backend.webrequests import getdata
 
 intents = discord.Intents.default()
 intents.members = True
