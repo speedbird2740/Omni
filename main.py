@@ -497,7 +497,8 @@ class restricted(commands.Cog):
 
                                     if not any(file.endswith(name) for name in notcog) and modified:
                                         updatedcogs.append(file)
-                                    elif modified:
+
+                                    if modified:
                                         restart = True
                                         open(f"backup/{file}", "wb").write(open(file, "rb").read())
                                         open(file, "wb").write(update.read())
