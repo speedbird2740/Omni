@@ -1,0 +1,13 @@
+{
+    "12a1": {
+        "packages": [
+            "discord",
+            "psutil",
+            "requests",
+            "cryptography",
+            "profanity_check",
+            "better_profanity",
+            "bs4"
+        ]
+    }
+}
