@@ -14,8 +14,6 @@ import requests
 from cryptography.fernet import Fernet
 from discord.ext import commands
 
-from files.backend.config_framework import listener, saveconfig, createconfig, gethash, loadconfig
-
 intents = discord.Intents.default()
 intents.members = True
 
@@ -639,6 +637,8 @@ class restricted(commands.Cog):
 
 
 if __name__ == "__main__":
+    from files.backend.config_framework import listener, saveconfig, createconfig, gethash, loadconfig
+
     bot.add_cog(restricted(bot))
     bot.load_extension("files.backend.events")
     bot.load_extension("files.configuration")
