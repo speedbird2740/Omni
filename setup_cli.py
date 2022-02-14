@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 import platform
+import shutil
 import sys
 import traceback
 
@@ -9,7 +10,7 @@ import pkg_resources
 
 
 def install_pkg(package):
-    os.system(f"{sys.executable} -m pip install {package}")
+    os.system(f'"{sys.executable}" -m pip install {package}')
 
 
 def check_reqs():
@@ -29,8 +30,13 @@ def check_reqs():
 
     print("Cloning repository...")
 
-    if not os.path.exists("temp/setup_cli"):
-        os.mkdir("temp/setup_cli")
+    if os.path.exists("temp/setup_cli"):  # This will fail due to insufficient permissions
+        os.remove("temp/setup_cli")
+
+    if not os.path.exists("temp/"):
+        os.mkdir("temp/")
+
+    os.mkdir("temp/setup_cli/")
 
     git.Repo.clone_from("https://github.com/speedbird2740/Omni", "temp/setup_cli/Omni_repo/")
 
@@ -60,9 +66,9 @@ if __name__ == "__main__":
     print("Warning: setup utility is a work in progress")
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("-S", "--setup", help="Setup the Omni instance")
-    parser.add_argument("-D", "--delete", help="Delete the Omni instance")
-    parser.add_argument("-U", "--update", help="Update the Omni instance")
+    parser.add_argument("--setup", help="Setup the Omni instance")
+    parser.add_argument("--delete", help="Delete the Omni instance")
+    parser.add_argument("--update", help="Update the Omni instance")
 
     args = parser.parse_args()
 
@@ -70,8 +76,8 @@ if __name__ == "__main__":
         import git
     except ImportError:
         input("Git is a required package for this utility. Press enter to install it: ")
-        os.system(f"{sys.executable} -m pip install gitpython")
+        os.system(f'"{sys.executable}" -m pip install gitpython')
         import git
 
     if args.setup:
-        pass
+        check_reqs()
