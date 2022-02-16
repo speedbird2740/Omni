@@ -2,7 +2,6 @@ import argparse
 import json
 import os
 import platform
-import shutil
 import sys
 import traceback
 
@@ -30,7 +29,7 @@ def check_reqs():
 
     print("Cloning repository...")
 
-    if os.path.exists("temp/setup_cli"):  # This will fail due to insufficient permissions
+    if os.path.exists("temp/setup_cli"):
         os.remove("temp/setup_cli")
 
     if not os.path.exists("temp/"):
@@ -60,6 +59,34 @@ def check_reqs():
     for pkg in pkg_reqs:
         if pkg not in packages:
             install_pkg(pkg)
+
+
+def install_omni():
+    install_dir = "src"
+    repo_dir = "temp/setup_cli/Omni_repo"
+    if not os.path.exists(install_dir):
+        os.mkdir(install_dir)
+    if not os.path.exists(f"{install_dir}/data/"):
+        os.mkdir(f"{install_dir}/data/")
+    if not os.path.exists(f"{install_dir}/files/"):
+        os.mkdir(f"{install_dir}/files/")
+    if not os.path.exists(f"{install_dir}/files/backend/"):
+        os.mkdir(f"{install_dir}/files/backend/")
+
+    data = open(f"{repo_dir}/main.py", "rb").read()
+    open(f"{install_dir}/main.py", "wb").write(data)
+
+    for obj in os.listdir(f"{repo_dir}/files"):
+        if not os.path.isdir(obj):
+            data = open(f"{repo_dir}/files/{obj}", "rb").read()
+            open(f"{install_dir}/files/{obj}", "wb").write(data)
+        elif obj == "backend":
+            for file in os.listdir(f"{repo_dir}/files/backend/"):
+                data = open(f"{repo_dir}/files/backend/{file}", "rb").read()
+                open(f"{install_dir}/files/backend/{file}", "wb").write(data)
+
+    from src.main import version
+    from src.files.backend.config_framework import createconfig
 
 
 if __name__ == "__main__":
