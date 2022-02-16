@@ -5,6 +5,8 @@ import platform
 import sys
 import traceback
 
+from getpass import getpass
+
 import pkg_resources
 
 
@@ -61,7 +63,8 @@ def check_reqs():
             install_pkg(pkg)
 
 
-def install_omni():
+def copy_files():
+    print("copying files...")
     install_dir = "src"
     repo_dir = "temp/setup_cli/Omni_repo"
     if not os.path.exists(install_dir):
@@ -85,8 +88,45 @@ def install_omni():
                 data = open(f"{repo_dir}/files/backend/{file}", "rb").read()
                 open(f"{install_dir}/files/backend/{file}", "wb").write(data)
 
-    from src.main import version
+
+def setup_config():
+    print("creating configuration...")
+
     from src.files.backend.config_framework import createconfig
+
+    botconfig = createconfig("other")
+    json.dump(botconfig, open("src/data/globalconfig.json", "w"))
+
+    config = {"discord": {}}
+    config["discord"]["name"] = input("Enter your Discord bot name: ")
+    config["discord"]["prefix"] = input("Enter your Discord bot's command prefix: ")
+    config["discord"]["owner_id"] = int(input("Enter the Discord bot's owner ID: "))
+    config["discord"]["log_channel"] = int(input("Enter the logging channel ID: "))
+    config["discord"]["api_key"] = getpass("Enter your Discord API key: ")
+
+    config["services"] = {}
+    config["services"]["img_srv"] = {}
+    img_srv_keys = config["services"]["img_srv"]
+
+    img_srv = input("Choose a image API provider\n\n"
+                    "Google [1]\n"
+                    "Microsoft Bing [2]")
+
+    while img_srv not in ["1", "2"]:
+        img_srv = input("Choose a image API provider\n\n"
+                        "Google [1]\n"
+                        "Microsoft Bing [2]")
+
+    img_srv = int(img_srv)
+
+    if img_srv == 1:
+        img_srv_keys["service"] = img_srv
+        img_srv_keys["api_key"] = getpass("Enter your Google custom search API key: ")
+        img_srv_keys["client_cx"] = getpass("Enter your Google client cx: ")
+
+    elif img_srv == 2:
+        img_srv_keys["service"] = img_srv
+        img_srv_keys["api_key"] = getpass("Enter your Microsoft Bing API key: ")
 
 
 if __name__ == "__main__":
