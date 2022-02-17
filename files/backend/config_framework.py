@@ -291,13 +291,13 @@ def _saveconfig(deltas):
                 except KeyError:
                     data[key] = createconfig("other")[key]
 
-            json.dump(data, open("data/globalconfig.json", "w"))
+            json.dump(data, open("data/globalconfig.json", "w"), indent=5)
 
         else:
             if not os.path.exists(f"data/{delta}"):
                 os.mkdir(f"data/{delta}")
 
-            json.dump(botdata[delta], open(f"data/{delta}/data.json", "w"))
+            json.dump(botdata[delta], open(f"data/{delta}/data.json", "w"), indent=5)
 
 
 # This must not be inside if __name__ == "__main__" statement

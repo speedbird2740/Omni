@@ -132,7 +132,7 @@ def setup_config():
 
     config["webservices"]["nasa_api_key"] = getpass("Enter your NASA API key: ")
 
-    json.dump(config, open("data/globalconfig.json", "w"))
+    json.dump(config, open("data/globalconfig.json", "w"), indent=5)
     os.chdir(os.pardir)
 
 
