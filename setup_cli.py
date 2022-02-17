@@ -4,7 +4,6 @@ import os
 import platform
 import sys
 import traceback
-
 from getpass import getpass
 
 import pkg_resources
@@ -94,19 +93,18 @@ def setup_config():
 
     from src.files.backend.config_framework import createconfig
 
-    botconfig = createconfig("other")
-    json.dump(botconfig, open("src/data/globalconfig.json", "w"))
+    config = createconfig("other")
 
-    config = {"discord": {}}
+    config["discord"] = {}
     config["discord"]["name"] = input("Enter your Discord bot name: ")
     config["discord"]["prefix"] = input("Enter your Discord bot's command prefix: ")
     config["discord"]["owner_id"] = int(input("Enter the Discord bot's owner ID: "))
     config["discord"]["log_channel"] = int(input("Enter the logging channel ID: "))
     config["discord"]["api_key"] = getpass("Enter your Discord API key: ")
 
-    config["services"] = {}
-    config["services"]["img_srv"] = {}
-    img_srv_keys = config["services"]["img_srv"]
+    config["webservices"] = {}
+    config["webservices"]["img_srv"] = {}
+    img_srv_keys = config["webservices"]["img_srv"]
 
     img_srv = input("Choose a image API provider\n\n"
                     "Google [1]\n"
@@ -128,14 +126,18 @@ def setup_config():
         img_srv_keys["service"] = img_srv
         img_srv_keys["api_key"] = getpass("Enter your Microsoft Bing API key: ")
 
+    config["services"]["nasa_api_key"] = getpass("Enter your NASA API key: ")
+
+    json.dump(config, open("src/data/globalconfig.json", "w"))
+
 
 if __name__ == "__main__":
     print("Warning: setup utility is a work in progress")
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--setup", help="Setup the Omni instance")
-    parser.add_argument("--delete", help="Delete the Omni instance")
-    parser.add_argument("--update", help="Update the Omni instance")
+    parser.add_argument("--setup", action="store_true", help="Setup the Omni instance")
+    parser.add_argument("--delete", action="store_true", help="Delete the Omni instance")
+    parser.add_argument("--update", action="store_true", help="Update the Omni instance")
 
     args = parser.parse_args()
 
