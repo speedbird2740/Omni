@@ -150,3 +150,5 @@ if __name__ == "__main__":
 
     if args.setup:
         check_reqs()
+        copy_files()
+        setup_config()
