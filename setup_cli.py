@@ -79,7 +79,7 @@ def copy_files():
     open(f"{install_dir}/main.py", "wb").write(data)
 
     for obj in os.listdir(f"{repo_dir}/files"):
-        if not os.path.isdir(obj):
+        if os.path.isfile(obj):
             data = open(f"{repo_dir}/files/{obj}", "rb").read()
             open(f"{install_dir}/files/{obj}", "wb").write(data)
         elif obj == "backend":
@@ -90,6 +90,9 @@ def copy_files():
 
 def setup_config():
     print("creating configuration...")
+    os.chdir("src/")
+
+    open("data/globalconfig.json", "w").write("0")  # Import will not work without this
 
     from src.files.backend.config_framework import createconfig
 
@@ -106,9 +109,10 @@ def setup_config():
     config["webservices"]["img_srv"] = {}
     img_srv_keys = config["webservices"]["img_srv"]
 
-    img_srv = input("Choose a image API provider\n\n"
+    img_srv = input("Supported image lookup providers\n\n"
                     "Google [1]\n"
-                    "Microsoft Bing [2]")
+                    "Microsoft Bing [2]\n\n"
+                    "Choose an image lookup provider: ")
 
     while img_srv not in ["1", "2"]:
         img_srv = input("Choose a image API provider\n\n"
@@ -126,9 +130,10 @@ def setup_config():
         img_srv_keys["service"] = img_srv
         img_srv_keys["api_key"] = getpass("Enter your Microsoft Bing API key: ")
 
-    config["services"]["nasa_api_key"] = getpass("Enter your NASA API key: ")
+    config["webservices"]["nasa_api_key"] = getpass("Enter your NASA API key: ")
 
-    json.dump(config, open("src/data/globalconfig.json", "w"))
+    json.dump(config, open("data/globalconfig.json", "w"))
+    os.chdir(os.pardir)
 
 
 if __name__ == "__main__":
