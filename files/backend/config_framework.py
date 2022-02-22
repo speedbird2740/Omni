@@ -99,6 +99,149 @@ def saveconfig(changes: dict or str) -> None:
     client.close()
 
 
+def processdeltas(deltas, config) -> dict:
+    keys = deltas.keys()
+
+    for key in keys:
+        token = key.split(".")
+        value = deltas[key]
+
+        if token[0] == "guild":
+            guildidhash = token[1]
+
+            if token[2] == "config":
+                guildconfig = config[guildidhash]["config"]
+                setting = token[3]
+
+                if not setting == "antiraid":
+                    if type(guildconfig[setting]) == list:
+                        action = token[4]
+
+                        if action == "append":
+                            guildconfig[setting].append(value)
+                        elif action == "remove":
+                            guildconfig[setting].remove(value)
+                        else:
+                            guildconfig[setting] = value
+                    else:
+                        assert setting in guildconfig
+
+                        guildconfig[setting] = value
+
+                elif setting == "antiraid":
+                    raidconfig = guildconfig["antiraid"]
+                    setting = token[4]
+
+                    if type(raidconfig[setting]) == dict:
+                        action = token[5]
+
+                        if action == "append":
+                            name = value[0]
+                            value = value[1]
+
+                            raidconfig[setting][name] = value
+                        elif action == "remove":
+                            name = value[0]
+
+                            del raidconfig[setting][name]
+                        elif action == "add":
+                            name = value[0]
+                            value = value[1]
+
+                            raidconfig[setting][name] += value
+                        else:
+                            name = value[0]
+                            value = value[1]
+
+                            raidconfig[setting][name] = value
+
+                    elif type(raidconfig[setting]) == list and not setting == "rate":
+                        action = token[5]
+
+                        if action == "append":
+                            raidconfig[setting].append(value)
+                        elif action == "remove":
+                            raidconfig[setting].remove(value)
+                        else:
+                            raidconfig[setting] = value
+
+                    elif type(raidconfig[setting]) == int:
+                        action = token[5]
+
+                        if action == "add":
+                            raidconfig[setting] += 1
+                        elif action == "subtract":
+                            raidconfig[setting] -= 1
+                        elif action == "reset":
+                            raidconfig[setting] = 0
+
+                    else:
+                        assert setting in raidconfig
+
+                        raidconfig[setting] = value
+
+            elif token[2] == "createconfig":
+                config[guildidhash] = createconfig("server")
+
+        elif token[0] == "createconfig":
+            newconfig = createconfig("other")
+
+            for key in newconfig.keys():
+                config[key] = newconfig[key]
+
+        elif type(config[token[0]]) == dict:
+            setting = token[0]
+            try:
+                action = token[1]
+            except:
+                action = None
+
+            if action == "append":
+                name = value[0]
+                value = value[1]
+
+                config[setting][name] = value
+            elif action == "remove":
+                name = value[0]
+
+                del config[setting][name]
+            elif action == "add":
+                name = value[0]
+                value = value[1]
+
+                config[setting][name] += value
+            else:
+                name = value[0]
+                value = value[1]
+
+                config[setting][name] = value
+
+        elif type(botdata[token[0]]) == list:
+            setting = token[0]
+            try:
+                action = token[1]
+            except:
+                action = None
+
+            if action == "append":
+                config[setting].append(value)
+            elif action == "remove":
+                config[setting].remove(value)
+            else:
+                config[setting] = value
+
+        elif type(botdata[token[0]]) == int:
+            setting = token[0]
+            action = token[1]
+
+            if action == "add":
+                config[setting] += 1
+            elif action == "subtract":
+                config[setting] -= 1
+            elif action == "reset":
+                config[setting] = 0
+
+
 def host():
     listener = Listener(("localhost", 443), authkey=authkey)
 
@@ -138,6 +281,9 @@ def host():
 
                                 elif action == "remove":
                                     guildconfig[setting].remove(value)
+
+                                elif action == "clear":
+                                    guildconfig[setting] = []
                             else:
                                 assert setting in guildconfig
 
@@ -160,7 +306,7 @@ def host():
 
                                     del raidconfig[setting][name]
 
-                                elif action == "reset":
+                                elif action == "clear":
                                     raidconfig[setting] = {}
 
                             elif type(raidconfig[setting]) == list and not setting == "rate":
@@ -304,4 +450,8 @@ def _saveconfig(deltas):
 while not os.path.exists("data/"):
     os.chdir(os.pardir)
 
-botdata = loadconfig()
+botdata = createconfig("other")
+
+processdeltas(botdata, [{"name": "global.botenabled", "value": False}])
+
+# botdata = loadconfig()
