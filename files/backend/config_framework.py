@@ -449,3 +449,9 @@ def _saveconfig(deltas):
 # This must not be inside if __name__ == "__main__" statement
 while not os.path.exists("data/"):
     os.chdir(os.pardir)
+
+botdata = createconfig("other")
+
+processdeltas(botdata, [{"name": "global.botenabled", "value": False}])
+
+# botdata = loadconfig()
