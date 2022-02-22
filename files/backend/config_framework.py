@@ -170,8 +170,6 @@ def processdeltas(deltas, config) -> dict:
 
                         if action == "add":
                             raidconfig[setting] += 1
-                        elif action == "subtract":
-                            raidconfig[setting] -= 1
                         elif action == "reset":
                             raidconfig[setting] = 0
 
@@ -230,14 +228,12 @@ def processdeltas(deltas, config) -> dict:
             else:
                 config[setting] = value
 
-        elif type(botdata[token[0]]) == int:
+        elif type(config[token[0]]) == int:
             setting = token[0]
             action = token[1]
 
             if action == "add":
                 config[setting] += 1
-            elif action == "subtract":
-                config[setting] -= 1
             elif action == "reset":
                 config[setting] = 0
 
@@ -282,8 +278,8 @@ def host():
                                 elif action == "remove":
                                     guildconfig[setting].remove(value)
 
-                                elif action == "clear":
-                                    guildconfig[setting] = []
+                                else:
+                                    guildconfig[setting] = value
                             else:
                                 assert setting in guildconfig
 
@@ -305,21 +301,26 @@ def host():
                                     name = value[0]
 
                                     del raidconfig[setting][name]
+                                elif action == "add":
+                                    name = value[0]
+                                    value = value[1]
 
-                                elif action == "clear":
-                                    raidconfig[setting] = {}
+                                    raidconfig[setting][name] += value
+                                else:
+                                    name = value[0]
+                                    value = value[1]
+
+                                    raidconfig[setting][name] = value
 
                             elif type(raidconfig[setting]) == list and not setting == "rate":
                                 action = token[5]
 
                                 if action == "append":
                                     raidconfig[setting].append(value)
-
                                 elif action == "remove":
                                     raidconfig[setting].remove(value)
-
-                                elif action == "reset":
-                                    raidconfig[setting] = []
+                                else:
+                                    raidconfig[setting] = value
 
                             elif type(raidconfig[setting]) == int:
                                 action = token[5]
@@ -404,6 +405,8 @@ def host():
 
                     if action == "add":
                         botdata[setting] += 1
+                    elif action == "reset":
+                        botdata[setting] = 0
 
             for port in ports:
                 client = Client(("localhost", port), authkey=authkey)
@@ -450,8 +453,4 @@ def _saveconfig(deltas):
 while not os.path.exists("data/"):
     os.chdir(os.pardir)
 
-botdata = createconfig("other")
-
-processdeltas(botdata, [{"name": "global.botenabled", "value": False}])
-
-# botdata = loadconfig()
+botdata = loadconfig()
