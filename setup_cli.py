@@ -2,6 +2,8 @@ import argparse
 import json
 import os
 import platform
+import shutil
+import stat
 import sys
 import traceback
 from getpass import getpass
@@ -31,7 +33,13 @@ def check_reqs():
     print("Cloning repository...")
 
     if os.path.exists("temp/setup_cli"):
-        os.remove("temp/setup_cli")
+        for root, dirs, files in os.walk("temp/setup_cli"):
+            for dir in dirs:
+                os.chmod(os.path.join(root, dir), stat.S_IRWXU)
+            for file in files:
+                os.chmod(os.path.join(root, file), stat.S_IRWXU)
+
+        shutil.rmtree("temp/setup_cli")
 
     if not os.path.exists("temp/"):
         os.mkdir("temp/")
@@ -41,7 +49,7 @@ def check_reqs():
     git.Repo.clone_from("https://github.com/speedbird2740/Omni", "temp/setup_cli/Omni_repo/")
 
     try:
-        update_reqs = json.load(open("updates.json", "r"))
+        update_reqs = json.load(open("temp/setup_cli/Omni_repo/updates.json", "r"))
     except Exception:
         traceback.print_exc()
         print("Failed to load update requirements. Get update requirements (updates.json) from the "
@@ -78,7 +86,7 @@ def copy_files():
     data = open(f"{repo_dir}/main.py", "rb").read()
     open(f"{install_dir}/main.py", "wb").write(data)
 
-    for obj in os.listdir(f"{repo_dir}/files"):
+    for obj in os.listdir(f"{repo_dir}/files/"):
         if os.path.isfile(obj):
             data = open(f"{repo_dir}/files/{obj}", "rb").read()
             open(f"{install_dir}/files/{obj}", "wb").write(data)
