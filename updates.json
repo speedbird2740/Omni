@@ -1,8 +1,7 @@
 {
-    "12a1": {
+    "12": {
         "packages": [
             "discord",
-            "psutil",
             "requests",
             "cryptography",
             "profanity_check",
