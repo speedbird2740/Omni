@@ -9,7 +9,6 @@ import zipfile
 from asyncio import sleep
 
 import discord
-import psutil
 import requests
 from cryptography.fernet import Fernet
 from discord.ext import commands
