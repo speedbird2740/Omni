@@ -138,7 +138,6 @@ def processdeltas(deltas, config) -> dict:
                         if action == "append":
                             name = value[0]
                             value = value[1]
-
                             raidconfig[setting][name] = value
                         elif action == "remove":
                             name = value[0]
@@ -162,6 +161,8 @@ def processdeltas(deltas, config) -> dict:
                             raidconfig[setting].append(value)
                         elif action == "remove":
                             raidconfig[setting].remove(value)
+                        elif action == "reset":
+                            raidconfig[setting] = []
                         else:
                             raidconfig[setting] = value
 
@@ -225,6 +226,8 @@ def processdeltas(deltas, config) -> dict:
                 config[setting].append(value)
             elif action == "remove":
                 config[setting].remove(value)
+            elif action == "reset":
+                botdata[setting] = []
             else:
                 config[setting] = value
 
@@ -236,6 +239,8 @@ def processdeltas(deltas, config) -> dict:
                 config[setting] += 1
             elif action == "reset":
                 config[setting] = 0
+
+    return config
 
 
 def host():
@@ -274,10 +279,8 @@ def host():
 
                                 if action == "append":
                                     guildconfig[setting].append(value)
-
                                 elif action == "remove":
                                     guildconfig[setting].remove(value)
-
                                 else:
                                     guildconfig[setting] = value
                             else:
@@ -319,6 +322,8 @@ def host():
                                     raidconfig[setting].append(value)
                                 elif action == "remove":
                                     raidconfig[setting].remove(value)
+                                elif action == "reset":
+                                    raidconfig[setting] = []
                                 else:
                                     raidconfig[setting] = value
 
@@ -389,10 +394,10 @@ def host():
 
                     if action == "append":
                         botdata[setting].append(value)
-
                     elif action == "remove":
                         botdata[setting].remove(value)
-
+                    elif action == "reset":
+                        botdata[setting] = []
                     else:
                         botdata[setting] = value
 
