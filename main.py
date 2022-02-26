@@ -21,16 +21,16 @@ bot = commands.Bot(command_prefix='./', intents=intents, help_command=None)
 bot.owner_id = "OWNER_ID"
 pingcooldown = []
 
-version = "12a1"
+version = "12"
 api_key_dev = "APIKEY"
 api_key_stable = "APIKEY"
 updatesuccess = True
 
 
-def backgroundtasks(pid: int):
+def backgroundtasks():
     count = 0
 
-    while psutil.pid_exists(pid):
+    while True:
         bot.loop.create_task(bot.change_presence(
             activity=discord.Activity(type=discord.ActivityType.playing, name=f"v{version} | ./changelog"),
             status=discord.Status.idle))
