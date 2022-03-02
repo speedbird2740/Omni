@@ -13,18 +13,6 @@ import requests
 from cryptography.fernet import Fernet
 from discord.ext import commands
 
-intents = discord.Intents.default()
-intents.members = True
-
-bot = commands.Bot(command_prefix='./', intents=intents, help_command=None)
-bot.owner_id = "OWNER_ID"
-pingcooldown = []
-
-version = "12"
-api_key_dev = "APIKEY"
-api_key_stable = "APIKEY"
-updatesuccess = True
-
 
 def backgroundtasks():
     count = 0
@@ -511,6 +499,19 @@ class restricted(commands.Cog):
 if __name__ == "__main__":
     from files.backend.config_framework import listener, saveconfig, createconfig, gethash, loadconfig, processdeltas
 
+    intents = discord.Intents.default()
+    intents.members = True
+
+    botdata = loadconfig()
+
+    bot = commands.Bot(command_prefix='./', intents=intents, help_command=None)
+    bot.owner_id = botdata["discord"]["owner_id"]
+    pingcooldown = []
+
+    version = "12"
+    api_key = botdata["discord"]["api_key"]
+    updatesuccess = True
+
     bot.add_cog(restricted(bot))
     bot.load_extension("files.backend.events")
     bot.load_extension("files.configuration")
@@ -521,5 +522,4 @@ if __name__ == "__main__":
     bot.load_extension("files.miscellaneous")
     threading.Thread(target=syncdata).start()
 
-    botdata = loadconfig()
-    bot.run(api_key_stable)
+    bot.run(api_key)

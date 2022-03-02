@@ -341,7 +341,7 @@ class events(commands.Cog):
 
                     return
 
-                channel = self.bot.get_channel("ERROR_CHANNEL")
+                channel = self.bot.get_channel(botdata["discord"]["log_channel"])
                 error = "".join(traceback.format_exception(type(error), error, error.__traceback__))
                 await channel.send(f"```python\n{error}```")
 
@@ -640,7 +640,7 @@ class events(commands.Cog):
 
                 await sleep(1)
 
-                channel = self.bot.get_channel("ERROR_CHANNEL")
+                channel = self.bot.get_channel(botdata["discord"]["log_channel"])
                 error = "".join(traceback.format_exception(type(error), error, error.__traceback__))
                 await channel.send(f"```python\n{error}```")
 
