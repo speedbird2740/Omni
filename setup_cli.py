@@ -11,8 +11,8 @@ from getpass import getpass
 import pkg_resources
 
 
-def install_pkg(package):
-    os.system(f'"{sys.executable}" -m pip install {package}')
+def install_pkg(package: str):
+    os.system(f'"{sys.executable}" -m pip install {package.replace("_", "-")}')
 
 
 def check_reqs():
@@ -102,14 +102,14 @@ def setup_config():
 
     open("data/globalconfig.json", "w").write("0")  # Import will not work without this
 
-    from src.files.backend.config_framework import createconfig
+    from src.files.backend.config_framework import createconfig, gethash
 
     config = createconfig("other")
 
     config["discord"] = {}
     config["discord"]["name"] = input("Enter your Discord bot name: ")
     config["discord"]["prefix"] = input("Enter your Discord bot's command prefix: ")
-    config["discord"]["owner_id"] = int(input("Enter the Discord bot's owner ID: "))
+    config["discord"]["owner_id"] = gethash(input("Enter the Discord bot's owner ID: "))
     config["discord"]["log_channel"] = int(input("Enter the logging channel ID: "))
     config["discord"]["api_key"] = getpass("Enter your Discord API key: ")
 
