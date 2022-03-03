@@ -180,27 +180,34 @@ class restricted(commands.Cog):
             elif module == "blacklist":  # This is broken
                 args = ctx.message.content.split(" ")
                 if not value == "reset":
-                    blacklist = botdata["blacklist"]
                     id = args[-1]
                     idhash = gethash(args[-1])
 
                 if value == "add":
-                    botdata["blacklist"].append(idhash)
+                    saveconfig({
+                        "blacklist.append": idhash
+                    })
                     await ctx.send(
                         embed=discord.Embed(description=f"Added <@!{id}> to the blacklist. They cannot use the bot now",
                                             color=discord.Colour.dark_blue()))
                 elif value == "remove":
-                    botdata["blacklist"].remove(idhash)
+                    saveconfig({
+                        "blacklist.remove": idhash
+                    })
                     await ctx.send(embed=discord.Embed(
                         description=f"Removed <@!{id}> from the blacklist. They can use the bot now",
                         color=discord.Colour.dark_blue()))
                 elif value == "reset":
-                    botdata["blacklist"].clear()
+                    saveconfig({
+                        "blacklist.clear": None
+                    })
                     await ctx.send("Successfully cleared blacklist!")
 
             elif module == "afk":
                 if value == "reset":
-                    botdata["afkmembers"].clear()
+                    saveconfig({
+                        "afkmembers": {}
+                    })
                     await ctx.send("Successfully cleared afk list!")
 
             elif module == "settings":
@@ -225,30 +232,6 @@ class restricted(commands.Cog):
                     await self.bot.change_presence(status=discord.Status.idle,
                                               activity=discord.Activity(type=discord.ActivityType.playing,
                                                                         name=f"v{version} | ./changelog"))
-
-            elif module == "analytics":  # This is a retired function
-                commandcount = botdata["commandscount"]
-                errors = ""
-                log = ""
-
-                while len(botdata["log"]) > 15:
-                    del botdata["log"][0]
-
-                while len(botdata["errors"]) > 5:
-                    del botdata["errors"][0]
-
-                for error in botdata["errors"]:
-                    errors += f"{error}\n"
-
-                for event in botdata["log"]:
-                    log += f"`{event}`\n"
-
-                embed = discord.Embed(title="Analytics", color=discord.Colour.dark_blue())
-                embed.add_field(name="Commands executed", value=commandcount)
-                embed.add_field(name="Log", value=log, inline=False)
-                embed.add_field(name="Errors", value=errors, inline=False)
-
-                await ctx.send(embed=embed)
 
             elif module == "exec":
                 code = ctx.message.content.replace("./admin exec ```py\n", "").replace("```", "")
