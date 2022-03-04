@@ -1,5 +1,3 @@
-version = "12"
-
 import json
 import os
 import subprocess
@@ -492,6 +490,7 @@ if __name__ == "__main__":
     bot = commands.Bot(command_prefix='./', intents=intents, help_command=None)
     bot.owner_id = botdata["discord"]["owner_id"]
     pingcooldown = []
+    version = "12"
 
     api_key = botdata["discord"]["api_key"]
     updatesuccess = True
