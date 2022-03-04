@@ -8,11 +8,6 @@ import traceback
 import zipfile
 from asyncio import sleep
 
-import discord
-import requests
-from cryptography.fernet import Fernet
-from discord.ext import commands
-
 
 def backgroundtasks():
     count = 0
@@ -480,6 +475,11 @@ class restricted(commands.Cog):
 
 
 if __name__ == "__main__":
+    import discord
+    import requests
+    from cryptography.fernet import Fernet
+    from discord.ext import commands
+
     from files.backend.config_framework import listener, saveconfig, createconfig, gethash, loadconfig, processdeltas
 
     intents = discord.Intents.default()
