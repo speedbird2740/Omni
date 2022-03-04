@@ -33,7 +33,7 @@ def backgroundtasks():
 def syncdata():
     global botdata
 
-    host = listener(port=7)
+    host = listener(port=2001)
 
     while True:
         try:
