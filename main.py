@@ -13,6 +13,10 @@ import requests
 from cryptography.fernet import Fernet
 from discord.ext import commands
 
+intents = discord.Intents.default()
+intents.members = True
+bot = commands.Bot(command_prefix='./', intents=intents, help_command=None)
+
 
 def backgroundtasks():
     count = 0
@@ -482,12 +486,7 @@ class restricted(commands.Cog):
 if __name__ == "__main__":
     from files.backend.config_framework import listener, saveconfig, createconfig, gethash, loadconfig, processdeltas
 
-    intents = discord.Intents.default()
-    intents.members = True
-
     botdata = loadconfig()
-
-    bot = commands.Bot(command_prefix='./', intents=intents, help_command=None)
     bot.owner_id = botdata["discord"]["owner_id"]
     pingcooldown = []
     version = "12"
