@@ -115,3 +115,4 @@ dmypy.json
 *.xml
 *.iml
 /temp/
+/testing/
