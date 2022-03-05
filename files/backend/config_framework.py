@@ -7,6 +7,7 @@ from multiprocessing.connection import Client, Listener
 ports = [2001]
 authkey = b"ANY_SECURE_STRING"
 changes = []
+HOST_PORT = 2000
 
 
 def listener(port: int) -> Listener:
@@ -93,7 +94,7 @@ def loadconfig() -> dict:
 
 
 def saveconfig(changes: dict or str) -> None:
-    client = Client(("localhost", 443), authkey=authkey)
+    client = Client(("localhost", HOST_PORT), authkey=authkey)
 
     client.send(changes)
     client.close()
@@ -244,7 +245,7 @@ def processdeltas(deltas, config) -> dict:
 
 
 def host():
-    listener = Listener(("localhost", 443), authkey=authkey)
+    listener = Listener(("localhost", HOST_PORT), authkey=authkey)
 
     while True:
         try:
