@@ -440,7 +440,7 @@ class moderation(commands.Cog):
 def syncdata():
     global botdata
 
-    host = listener(port=4)
+    host = listener(port=2004)
 
     while True:
         try:

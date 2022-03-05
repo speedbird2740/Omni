@@ -143,7 +143,7 @@ class configuration(commands.Cog):
 def syncdata():
     global botdata
 
-    host = listener(port=1)
+    host = listener(port=2002)
 
     while True:
         try:

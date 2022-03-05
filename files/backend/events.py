@@ -650,7 +650,7 @@ class events(commands.Cog):
 def syncdata():
     global botdata
 
-    host = listener(port=8)
+    host = listener(port=2006)
 
     while True:
         try:

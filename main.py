@@ -13,6 +13,8 @@ import requests
 from cryptography.fernet import Fernet
 from discord.ext import commands
 
+version = "12"
+
 intents = discord.Intents.default()
 intents.members = True
 bot = commands.Bot(command_prefix='./', intents=intents, help_command=None)
@@ -489,7 +491,6 @@ if __name__ == "__main__":
     botdata = loadconfig()
     bot.owner_id = botdata["discord"]["owner_id"]
     pingcooldown = []
-    version = "12"
 
     api_key = botdata["discord"]["api_key"]
     updatesuccess = True

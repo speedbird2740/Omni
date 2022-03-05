@@ -4,7 +4,7 @@ import os
 import traceback
 from multiprocessing.connection import Client, Listener
 
-ports = [7]
+ports = [2001]
 authkey = b"ANY_SECURE_STRING"
 changes = []
 
@@ -12,9 +12,9 @@ changes = []
 def listener(port: int) -> Listener:
     global ports
 
-    assert port not in ports if not port == 7 else True
+    assert port not in ports if not port == 2001 else True
 
-    if not port == 7:
+    if not port == 2001:
         ports.append(port)
 
     return Listener(("localhost", port), authkey=authkey)

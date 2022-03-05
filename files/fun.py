@@ -180,7 +180,7 @@ def syncdata():
 
     global botdata
 
-    host = listener(port=2)
+    host = listener(port=2003)
 
     while True:
         try:
