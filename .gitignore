@@ -116,3 +116,4 @@ dmypy.json
 *.iml
 /temp/
 /testing/
+.DS_Store
