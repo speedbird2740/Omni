@@ -1,4 +1,5 @@
 import datetime
+import json
 import random
 import threading
 import time
@@ -10,7 +11,7 @@ import profanity_check
 from better_profanity import profanity
 from discord.ext import commands
 
-from files.backend.config_framework import loadconfig, saveconfig, listener, gethash, createconfig, host
+from files.backend.config_framework import loadconfig, saveconfig, listener, gethash, host, processdeltas
 
 botdata = {}
 whitelist = (
@@ -341,7 +342,7 @@ class events(commands.Cog):
 
                     return
 
-                channel = self.bot.get_channel(botdata["discord"]["log_channel"])
+                channel = self.bot.get_channel(credentials["log_channel"])
                 error = "".join(traceback.format_exception(type(error), error, error.__traceback__))
                 await channel.send(f"```python\n{error}```")
 
@@ -640,7 +641,7 @@ class events(commands.Cog):
 
                 await sleep(1)
 
-                channel = self.bot.get_channel(botdata["discord"]["log_channel"])
+                channel = self.bot.get_channel(botdata["log_channel"])
                 error = "".join(traceback.format_exception(type(error), error, error.__traceback__))
                 await channel.send(f"```python\n{error}```")
 
@@ -661,134 +662,7 @@ def syncdata():
                 host.close()
                 break
 
-            for key in data.keys():
-                token = key.split(".")
-                value = data[key]
-
-                if token[0] == "guild":
-                    guildidhash = token[1]
-
-                    if token[2] == "config":
-                        guildconfig = botdata[guildidhash]["config"]
-                        setting = token[3]
-
-                        if not setting == "antiraid":
-                            if type(guildconfig[setting]) == list:
-                                action = token[4]
-
-                                if action == "append":
-                                    guildconfig[setting].append(value)
-
-                                elif action == "remove":
-                                    guildconfig[setting].remove(value)
-                            else:
-                                assert setting in guildconfig
-
-                                guildconfig[setting] = value
-
-                        elif setting == "antiraid":
-                            raidconfig = guildconfig["antiraid"]
-                            setting = token[4]
-
-                            if type(raidconfig[setting]) == dict:
-                                action = token[5]
-
-                                if action == "append":
-                                    name = value[0]
-                                    config = value[1]
-
-                                    raidconfig[setting][name] = config
-                                elif action == "remove":
-                                    name = value[0]
-
-                                    del raidconfig[setting][name]
-
-                                elif action == "reset":
-                                    raidconfig[setting] = {}
-
-                            elif type(raidconfig[setting]) == list and not setting == "rate":
-                                action = token[5]
-
-                                if action == "append":
-                                    raidconfig[setting].append(value)
-
-                                elif action == "remove":
-                                    raidconfig[setting].remove(value)
-
-                                elif action == "reset":
-                                    raidconfig[setting] = []
-
-                            elif type(raidconfig[setting]) == int:
-                                action = token[5]
-
-                                if action == "add":
-                                    raidconfig[setting] += 1
-                                elif action == "reset":
-                                    raidconfig[setting] = 0
-
-                            else:
-                                assert setting in raidconfig
-
-                                raidconfig[setting] = value
-
-                    elif token[2] == "createconfig":
-                        botdata[guildidhash] = createconfig("server")
-
-                elif token[0] == "createconfig":
-                    newconfig = createconfig("other")
-
-                    for key in newconfig.keys():
-                        botdata[key] = newconfig[key]
-
-                elif type(botdata[token[0]]) == dict:
-                    setting = token[0]
-                    try:
-                        action = token[1]
-                    except:
-                        action = None
-
-                    if action == "append":
-                        name = value[0]
-                        config = value[1]
-
-                        botdata[setting][name] = config
-                    elif action == "remove":
-                        name = value[0]
-
-                        del botdata[setting][name]
-                    elif action == "add":
-                        name = value[0]
-                        config = value[1]
-
-                        botdata[setting][name] += config
-                    else:
-                        name = value[0]
-                        config = value[1]
-
-                        botdata[setting][name] = config
-
-                elif type(botdata[token[0]]) == list:
-                    setting = token[0]
-                    try:
-                        action = token[1]
-                    except:
-                        action = None
-
-                    if action == "append":
-                        botdata[setting].append(value)
-
-                    elif action == "remove":
-                        botdata[setting].remove(value)
-
-                    else:
-                        botdata[setting] = value
-
-                elif type(botdata[token[0]]) == int:
-                    setting = token[0]
-                    action = token[1]
-
-                    if action == "add":
-                        botdata[setting] += 1
+            botdata = processdeltas(data, botdata)
         except:
             traceback.print_exc()
 
@@ -799,4 +673,6 @@ def setup(bot: commands.Bot):
     threading.Thread(target=host).start()
     threading.Thread(target=syncdata).start()
     bot.add_cog(events(bot))
+
     botdata = loadconfig()
+    credentials = json.load(open("data/credentials.json"))

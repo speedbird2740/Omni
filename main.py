@@ -489,10 +489,12 @@ if __name__ == "__main__":
     from files.backend.config_framework import listener, saveconfig, createconfig, gethash, loadconfig, processdeltas
 
     botdata = loadconfig()
-    bot.owner_id = botdata["discord"]["owner_id"]
+    credentials = json.load(open("data/credentials.json"))
+
+    bot.owner_id = credentials["owner_id"]
     pingcooldown = []
 
-    api_key = botdata["discord"]["api_key"]
+    api_key = botdata["api_key"]
     updatesuccess = True
 
     bot.add_cog(restricted(bot))
