@@ -133,7 +133,7 @@ class restricted(commands.Cog):
     async def admin(self, ctx, module, value=None):
         global botdata
 
-        if ctx.author.id == bot.owner_id:
+        if ctx.author.id == credentials["owner_id"]:
             if module == "bot":
                 if value == "disable":
                     saveconfig({
@@ -250,7 +250,7 @@ class restricted(commands.Cog):
 
     @commands.command()
     async def update(self, ctx):
-        if ctx.author.id == bot.owner_id:
+        if ctx.author.id == credentials["owner_id"]:
             args = ctx.message.content.split(" ")
             restart = False
             updatedcogs = []
