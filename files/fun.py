@@ -8,7 +8,6 @@ import discord
 import requests
 from bs4 import BeautifulSoup as bs
 from discord.ext import commands
-from profanity_check import predict_prob
 
 from files.backend.config_framework import listener, loadconfig, saveconfig, gethash, processdeltas
 from files.backend.webrequests import getdata
@@ -109,10 +108,6 @@ class fun(commands.Cog):
                 saveconfig({
                     "ratings.append": [itemhash, rating]
                 })
-
-            if predict_prob([item])[0] > 0.80:
-                raise commands.errors.BadArgument(
-                    "Your item has been flagged by my profanity module. Please try again.")
 
             await ctx.send(
                 embed=discord.Embed(description=f"I rate {item} a {rating}/10!", color=discord.Colour.dark_blue()))

@@ -5,10 +5,10 @@ from asyncio import sleep
 
 import discord
 import requests
+from better_profanity import profanity
 from discord.ext import commands
 from discord.ext.commands import HelpCommand as dhelp
 from discord.ext.commands import has_permissions
-from profanity_check import predict_prob
 
 from files.backend.config_framework import gethash, saveconfig, loadconfig, listener, processdeltas
 
@@ -31,7 +31,7 @@ class utility(commands.Cog):
             query = ctx.message.content.replace("./image ", "").replace(" ", "+")
             hash = gethash(query.lower())
 
-            if predict_prob([query])[0] > 0.80:
+            if profanity.contains_profanity(query):
                 raise commands.errors.BadArgument(
                     "Your query has been flagged by my profanity module. Please try again.")
 
@@ -97,10 +97,6 @@ class utility(commands.Cog):
             afkmsg = dhelp().remove_mentions(afkmsg)
             memberidhash = gethash(ctx.author.id)
 
-            if predict_prob([afkmsg])[0] > 0.80:
-                raise commands.errors.BadArgument(
-                    "Your item has been flagged by my profanity module. Please try again.")
-
             saveconfig({
                 "afkmembers.append": [memberidhash, afkmsg]
             })
@@ -143,10 +139,6 @@ class utility(commands.Cog):
             content = ctx.message.content.replace(f"./remind {time} ", "")
             print(content)
             content = dhelp().remove_mentions(content)
-
-            if predict_prob([content])[0] > 0.80:
-                raise commands.errors.BadArgument(
-                    "Your item has been flagged by my profanity module. Please try again.")
 
             if time.endswith("m"):
                 seconds = 60 * float(time.replace("m", ""))
@@ -209,10 +201,6 @@ class utility(commands.Cog):
 
             if title and description:
                 checkstring = title + description
-
-                if predict_prob([checkstring])[0] > 0.80:
-                    raise commands.errors.BadArgument(
-                        "Your item has been flagged by my profanity module. Please try again.")
 
                 if len(title) >= 256:
                     raise commands.errors.BadArgument(message="Title must be less than 256 characters.")

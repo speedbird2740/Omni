@@ -7,7 +7,6 @@ import traceback
 from asyncio import sleep
 
 import discord
-import profanity_check
 from better_profanity import profanity
 from discord.ext import commands
 
@@ -419,7 +418,7 @@ class events(commands.Cog):
                 return
 
             if guilddata["config"]["antiraid"]["banprofanenicks"] \
-                    and profanity_check.predict_prob([member.display_name])[0] > 0.80:
+                    and profanity.contains_profanity(member.display_name):
                 await sleep(0.2)
 
                 action = "kicked"
@@ -446,13 +445,9 @@ class events(commands.Cog):
                     await sleep(0.5)
 
                 try:
-                    await member.kick(reason=f"Profane nickname"
-                                             f" ({round(profanity_check.predict_prob([member.display_name])[0]) * 100}%"
-                                             f" confidence)")
+                    await member.kick(reason="Profane nickname")
                     await sleep(1)
-                    await member.guild.system_channel.send(f"Kicked {member.mention}: Profane nickname"
-                                                           f" ({round(profanity_check.predict_prob([member.display_name])[0]) * 100}%"
-                                                           f" confidence)")
+                    await member.guild.system_channel.send("Kicked {member.mention}: Profane nickname")
                 except:
                     await sleep(1)
                     await member.guild.system_channel.send(f"Could not kick {member.mention}!")

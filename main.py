@@ -494,7 +494,7 @@ if __name__ == "__main__":
     bot.owner_id = credentials["owner_id"]
     pingcooldown = []
 
-    api_key = botdata["api_key"]
+    api_key = credentials["api_key"]
     updatesuccess = True
 
     bot.add_cog(restricted(bot))

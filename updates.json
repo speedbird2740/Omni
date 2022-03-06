@@ -4,7 +4,6 @@
             "discord",
             "requests",
             "cryptography",
-            "profanity_check",
             "better_profanity",
             "bs4"
         ]

@@ -6,7 +6,6 @@ import discord
 from better_profanity import profanity
 from discord.ext import commands
 from discord.ext.commands import has_permissions
-from profanity_check import predict_prob
 
 from files.backend.config_framework import loadconfig, saveconfig, listener, gethash, processdeltas
 
@@ -350,17 +349,15 @@ class moderation(commands.Cog):
                 elif "administrator" in permissions or any("manage" in permission for permission in permissions):
                     warnings += f"**-** {role.mention} has manager/administrator permissions.\n"
 
-                if predict_prob([role.name])[0] > 0.60:
-                    warnings += f"**-** {role.mention}: potentially offensive role name ({round(predict_prob([role.name])[0] * 100, 1)}% confidence).\n"
+                if profanity.contains_profanity(role.name):
+                    warnings += f"**-** {role.mention}: potentially offensive role name.\n"
 
-        if predict_prob([ctx.guild.name])[0] > 0.60:
-            warnings += f"**-** Potentially offensive server name ({round(predict_prob([ctx.guild.name])[0] * 100, 1)}% confidence).\n"
+        if profanity.contains_profanity(ctx.guild.name):
+            warnings += f"**-** Potentially offensive server name.\n"
 
         for channel in ctx.guild.channels:
-            prob = predict_prob([channel.name])[0]
-
-            if prob > 0.60:
-                warnings += f"**-** {channel.mention}: potentially offensive channel name ({round(prob * 100, 1)}% confidence).\n"
+            if profanity.contains_profanity(channel.name):
+                warnings += f"**-** {channel.mention}: potentially offensive channel name.\n"
 
         if not ctx.guild.mfa_level == 1:
             warnings += "**-** 2 factor authentication for moderator powers is not required.\n"
