@@ -16,19 +16,17 @@ def install_pkg(package: str):
 
 
 def check_reqs():
-    warnings = []
     python_version = platform.python_version_tuple()
 
     print("Checking Python version...")
 
     if int(python_version[0]) < 3:
         raise Exception("Python 3.x required")
-    if int(python_version[1]) != 7:
-        warnings.append("WARNING: some Python packages may not install/work properly without Python 3.7")
 
     print("Checking operating system...")
     if not platform.system() == "Windows":
-        raise Exception("Omni only supports the Windows operating system")
+        print(
+            f"Warning: Omni may not work properly on {platform.system()}. MacOS/multi-platform support is being tested")
 
     print("Cloning repository...")
 
@@ -60,9 +58,7 @@ def check_reqs():
 
     print("Checking python packages...")
 
-    from temp.setup_cli.Omni_repo.main import version
-
-    pkg_reqs = update_reqs[version]["packages"]
+    pkg_reqs = update_reqs["12"]["packages"]
     packages = [dist.project_name for dist in pkg_resources.working_set]
 
     for pkg in pkg_reqs:
@@ -87,7 +83,7 @@ def copy_files():
     open(f"{install_dir}/main.py", "wb").write(data)
 
     for obj in os.listdir(f"{repo_dir}/files/"):
-        if os.path.isfile(obj):
+        if obj.endswith(".py"):
             data = open(f"{repo_dir}/files/{obj}", "rb").read()
             open(f"{install_dir}/files/{obj}", "wb").write(data)
         elif obj == "backend":
@@ -95,27 +91,25 @@ def copy_files():
                 data = open(f"{repo_dir}/files/backend/{file}", "rb").read()
                 open(f"{install_dir}/files/backend/{file}", "wb").write(data)
 
+    open(f"{install_dir}/data/nasalinks.json", "wb").write(open(f"{repo_dir}/data/nasalinks.json", "rb").read())
+
 
 def setup_config():
     print("creating configuration...")
     os.chdir("src/")
 
-    open("data/globalconfig.json", "w").write("0")  # Import will not work without this
+    open("data/globalconfig.json", "w").write("{}")  # Import will not work without this
 
-    from src.files.backend.config_framework import createconfig, gethash
+    from src.files.backend.config_framework import createconfig
 
-    config = createconfig("other")
-
-    config["discord"] = {}
-    config["discord"]["name"] = input("Enter your Discord bot name: ")
-    config["discord"]["prefix"] = input("Enter your Discord bot's command prefix: ")
-    config["discord"]["owner_id"] = gethash(input("Enter the Discord bot's owner ID: "))
-    config["discord"]["log_channel"] = int(input("Enter the logging channel ID: "))
-    config["discord"]["api_key"] = getpass("Enter your Discord API key: ")
-
-    config["webservices"] = {}
-    config["webservices"]["img_srv"] = {}
-    img_srv_keys = config["webservices"]["img_srv"]
+    config = {}
+    config["name"] = input("Enter your Discord bot name: ")
+    config["prefix"] = input("Enter your Discord bot's command prefix: ")
+    config["owner_id"] = int(input("Enter the Discord bot's owner ID: "))
+    config["log_channel"] = int(input("Enter the logging channel ID: "))
+    config["api_key"] = getpass("Enter your Discord API key: ")
+    config["img_srv"] = {}
+    img_srv_keys = config["img_srv"]
 
     img_srv = input("Supported image lookup providers\n\n"
                     "Google [1]\n"
@@ -138,10 +132,20 @@ def setup_config():
         img_srv_keys["service"] = img_srv
         img_srv_keys["api_key"] = getpass("Enter your Microsoft Bing API key: ")
 
-    config["webservices"]["nasa_api_key"] = getpass("Enter your NASA API key: ")
+    config["nasa_api_key"] = getpass("Enter your NASA API key: ")
 
-    json.dump(config, open("data/globalconfig.json", "w"), indent=5)
+    json.dump(config, open("data/credentials.json", "w"), indent=5)
+    json.dump(createconfig("other"), open("data/globalconfig.json", "w"), indent=5)
     os.chdir(os.pardir)
+
+    print("Configuration process complete.")
+
+
+def start():
+    print("Starting bot...")
+
+    os.chdir("src/")
+    os.system(f"{sys.executable} main.py")
 
 
 if __name__ == "__main__":
@@ -165,3 +169,6 @@ if __name__ == "__main__":
         check_reqs()
         copy_files()
         setup_config()
+
+        if input("Would you like to start the bot now? (Y/n): ").lower() == "y":
+            start()

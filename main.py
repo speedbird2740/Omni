@@ -118,7 +118,7 @@ async def on_message(msg):
                 await bot.process_commands(msg)
     except Exception as error:
         if not type(error) == KeyError:
-            channel = bot.get_channel("ERROR_CHANNEL")
+            channel = bot.get_channel(credentials["log_channel"])
             error = "".join(traceback.format_exception(type(error), error, error.__traceback__))
             await channel.send(f"```python\n{error}```")
 
