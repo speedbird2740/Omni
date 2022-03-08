@@ -14,6 +14,7 @@ from files.backend.config_framework import gethash, saveconfig, loadconfig, list
 
 searchcache = {}
 botdata = {}
+credentials = {}
 
 
 class utility(commands.Cog):
@@ -47,19 +48,32 @@ class utility(commands.Cog):
                     msg = discord.Embed(description=":x: no pictures found", color=discord.Colour.red())
 
             else:
-                try:
-                    data = json.loads(requests.get(
-                        f"https://www.googleapis.com/customsearch/v1?key=YOUR_API_KEY&cx=YOUR_CXq={query}&searchType=image&safe=active").text)
+                img_srv = credentials["img_srv"]
+
+                if img_srv["service"] == 1:
+                    params = {
+                        "key": credentials["api_key"],
+                        "cx": credentials["client_cx"],
+                        "q": query,
+                        "searchType": "image",
+                        "safe": "active"
+                    }
+
+                    data = requests.get(f"https://www.googleapis.com/customsearch/v1", params=params).json()
 
                     for item in data["items"]:
                         links.append(item["link"])
-                except:
-                    key = "YOUR_KEY"
-                    assert key
-                    headers = {"Ocp-Apim-Subscription-Key": key}
-                    data = requests.get(
-                        f"https://api.bing.microsoft.com/v7.0/search?q={query}&responseFilter=Images&safeSearch=strict&count=15",
-                        headers=headers).json()
+
+                elif img_srv["service"] == 2:
+                    headers = {"Ocp-Apim-Subscription-Key": img_srv["api_key"]}
+                    params = {
+                        "q": query,
+                        "responseFilter": "Images",
+                        "safeSearch": "strict",
+                        "count": "15"
+                    }
+
+                    data = requests.get(f"https://api.bing.microsoft.com/v7.0/search", headers=headers, params=params).json()
                     images = data["images"]["value"]
 
                     for image in images:
@@ -265,5 +279,6 @@ def setup(bot: commands.Bot):
 
     bot.add_cog(utility(bot))
     botdata = loadconfig()
+    credentials = json.load(open("data/credentials.json"))
     threading.Thread(target=syncdata).start()
 

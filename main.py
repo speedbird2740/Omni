@@ -104,6 +104,7 @@ async def on_ready():
         pid = os.getpid()
         threading.Thread(target=backgroundtasks, args=(pid,)).start()
 
+
 @bot.event
 async def on_message(msg):
     try:
