@@ -111,25 +111,23 @@ def setup_config():
     config["img_srv"] = {}
     img_srv_keys = config["img_srv"]
 
-    img_srv = input("Supported image lookup providers\n\n"
-                    "Google [1]\n"
-                    "Microsoft Bing [2]\n\n"
-                    "Choose an image lookup provider: ")
+    img_srv_keys["service"] = input("Supported image lookup providers\n\n"
+                                    "Google [1]\n"
+                                    "Microsoft Bing [2]\n\n"
+                                    "Choose an image lookup provider: ")
 
-    while img_srv not in ["1", "2"]:
-        img_srv = input("Choose a image API provider\n\n"
-                        "Google [1]\n"
-                        "Microsoft Bing [2]")
+    while img_srv_keys["service"] not in ["1", "2"]:
+        img_srv_keys["service"] = input("Choose a image API provider\n\n"
+                                        "Google [1]\n"
+                                        "Microsoft Bing [2]")
 
-    img_srv = int(img_srv)
+    img_srv_keys["service"] = int(img_srv_keys["service"])
 
-    if img_srv == 1:
-        img_srv_keys["service"] = img_srv
+    if img_srv_keys["service"] == 1:
         img_srv_keys["api_key"] = getpass("Enter your Google custom search API key: ")
         img_srv_keys["client_cx"] = getpass("Enter your Google client cx: ")
 
-    elif img_srv == 2:
-        img_srv_keys["service"] = img_srv
+    elif img_srv_keys["service"] == 2:
         img_srv_keys["api_key"] = getpass("Enter your Microsoft Bing API key: ")
 
     config["nasa_api_key"] = getpass("Enter your NASA API key: ")

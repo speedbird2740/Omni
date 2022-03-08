@@ -13,6 +13,7 @@ from discord.ext import commands
 from files.backend.config_framework import loadconfig, saveconfig, listener, gethash, host, processdeltas
 
 botdata = {}
+credentials = {}
 whitelist = (
     "dumb", "stupid", "idiot", "nerd", "wtf", "len", "crap", "lmao", "analy", "gae", "gay", "god", "stroke", "weed",
     "omg", "ugly")
@@ -151,7 +152,6 @@ class events(commands.Cog):
                                                     color=discord.Colour.red()))
 
                         elif not globalconfig["someoneping"]:
-                            log.append(f"{date} @someone disabled globally.")
                             await ctx.channel.send(embed=discord.Embed(description="@someone ping is disabled globally",
                                                                        color=discord.Colour.red()))
 
@@ -664,6 +664,7 @@ def syncdata():
 
 def setup(bot: commands.Bot):
     global botdata
+    global credentials
 
     threading.Thread(target=host).start()
     threading.Thread(target=syncdata).start()
