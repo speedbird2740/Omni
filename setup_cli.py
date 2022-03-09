@@ -94,6 +94,22 @@ def copy_files():
     open(f"{install_dir}/data/nasalinks.json", "wb").write(open(f"{repo_dir}/data/nasalinks.json", "rb").read())
 
 
+def delete_files():
+    keepconfig = input("Keep configuration? (Y/n): ")
+
+    if keepconfig:
+        shutil.rmtree("src/files")
+
+        for file in os.listdir():
+            if file == "data" and os.path.isdir(f"src/{file}"):
+                continue
+
+            if os.path.isfile(f"src/{file}"):
+                os.remove(f"src/{file}")
+            else:
+                shutil.rmtree(f"src/{file}")
+
+
 def setup_config():
     print("creating configuration...")
     os.chdir("src/")
@@ -171,3 +187,6 @@ if __name__ == "__main__":
 
         if input("Would you like to start the bot now? (Y/n): ").lower() == "y":
             start()
+
+    elif args.delete:
+        delete_files()
