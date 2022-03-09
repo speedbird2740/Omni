@@ -68,13 +68,12 @@ class utility(commands.Cog):
                     headers = {"Ocp-Apim-Subscription-Key": img_srv["api_key"]}
                     params = {
                         "q": query,
-                        "responseFilter": "Images",
                         "safeSearch": "strict",
-                        "count": "15"
+                        "count": "25"
                     }
 
-                    data = requests.get(f"https://api.bing.microsoft.com/v7.0/search", headers=headers, params=params).json()
-                    images = data["images"]["value"]
+                    data = requests.get(f"https://api.bing.microsoft.com/v7.0/images/search", headers=headers, params=params).json()
+                    images = data["value"]
 
                     for image in images:
                         links.append(image["contentUrl"])
@@ -276,6 +275,7 @@ def syncdata():
 
 def setup(bot: commands.Bot):
     global botdata
+    global credentials
 
     bot.add_cog(utility(bot))
     botdata = loadconfig()

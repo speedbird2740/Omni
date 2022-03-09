@@ -98,7 +98,8 @@ def setup_config():
     print("creating configuration...")
     os.chdir("src/")
 
-    open("data/globalconfig.json", "w").write("{}")  # Import will not work without this
+    if not os.path.exists("data/globalconfig.json"):
+        open("data/globalconfig.json", "w").write("{}")  # Import will not work without this
 
     from src.files.backend.config_framework import createconfig
 
