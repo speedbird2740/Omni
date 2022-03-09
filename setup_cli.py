@@ -111,15 +111,15 @@ def setup_config():
     config["img_srv"] = {}
     img_srv_keys = config["img_srv"]
 
-    img_srv_keys["service"] = input("Supported image lookup providers\n\n"
-                                    "Google [1]\n"
-                                    "Microsoft Bing [2]\n\n"
-                                    "Choose an image lookup provider: ")
-
-    while img_srv_keys["service"] not in ["1", "2"]:
-        img_srv_keys["service"] = input("Choose a image API provider\n\n"
+    img_srv_keys["service"] = int(input("Supported image lookup providers\n\n"
                                         "Google [1]\n"
-                                        "Microsoft Bing [2]")
+                                        "Microsoft Bing [2]\n\n"
+                                        "Choose an image lookup provider: "))
+
+    while img_srv_keys["service"] not in [1, 2]:
+        img_srv_keys["service"] = int(input("Choose a image API provider\n\n"
+                                            "Google [1]\n"
+                                            "Microsoft Bing [2]"))
 
     img_srv_keys["service"] = int(img_srv_keys["service"])
 

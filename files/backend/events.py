@@ -636,7 +636,7 @@ class events(commands.Cog):
 
                 await sleep(1)
 
-                channel = self.bot.get_channel(botdata["log_channel"])
+                channel = self.bot.get_channel(credentials["log_channel"])
                 error = "".join(traceback.format_exception(type(error), error, error.__traceback__))
                 await channel.send(f"```python\n{error}```")
 
