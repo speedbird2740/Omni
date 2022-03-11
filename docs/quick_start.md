@@ -9,8 +9,7 @@
 
 ### Accounts/API requirements
  - Discord bot application/API key
- - Google custom search API key and client CX
- - Bing API key (optional)
+ - Either Google custom search API key and client CX or Bing API key
  - NASA API key (may still work without one)
 
 
@@ -23,5 +22,5 @@
  - Windows: `python setup_cli.py --setup`
  - MacOS/Linux: `python3 setup_cli.py --setup`
 
-###Important notes
+### Important notes
 - If you do not have a NASA API key, you may put `DEMO_KEY` as your API key. However, it is recommended you [get an API key](https://api.nasa.gov).
