@@ -1,3 +1,4 @@
+import json
 import random
 import threading
 import time
@@ -270,6 +271,7 @@ def syncdata(bot):
     global spacex
     global loading
 
+    credentials = json.load(open("data/credentials.json"))
     slapgifs, fightgifs, facts, nasalinks = getdata()
     loading = True
     count = 60
@@ -287,7 +289,7 @@ def syncdata(bot):
                 loading = False
             except Exception as error:
                 error = "".join(traceback.format_exception(type(error), error, error.__traceback__))
-                bot.loop.create_task(bot.get_channel("ERROR_CHANNEL").send(f"```python\n{error}```"))
+                bot.loop.create_task(bot.get_channel(credentials["log_channel"]).send(f"```python\n{error}```"))
                 spacex = _spacex
                 apod = _apod
                 loading = False

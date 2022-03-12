@@ -62,9 +62,6 @@ async def on_ready():
 
     print("Bot online")
 
-    while len(botdata["log"]) > 10:
-        del botdata["log"][0]
-
     if os.path.exists("bot log.txt"):
         try:
             val = open("bot log.txt", "r").read()
@@ -122,8 +119,6 @@ async def on_message(msg):
             channel = bot.get_channel(credentials["log_channel"])
             error = "".join(traceback.format_exception(type(error), error, error.__traceback__))
             await channel.send(f"```python\n{error}```")
-
-            botdata[gethash(msg.guild.id)] = createconfig("server")
 
 
 class restricted(commands.Cog):
@@ -487,7 +482,7 @@ class restricted(commands.Cog):
 
 
 if __name__ == "__main__":
-    from files.backend.config_framework import listener, saveconfig, createconfig, gethash, loadconfig, processdeltas
+    from files.backend.config_framework import listener, saveconfig, gethash, loadconfig, processdeltas
 
     botdata = loadconfig()
     credentials = json.load(open("data/credentials.json"))

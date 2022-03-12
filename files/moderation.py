@@ -27,7 +27,6 @@ class moderation(commands.Cog):
 
         if setting == "end":
             if raidconfig["underraid"]:
-
                 saveconfig({
                     f"{syntax}.count.reset": None,
                     f"{syntax}.underraid": False,
