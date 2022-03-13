@@ -296,7 +296,7 @@ class restricted(commands.Cog):
                             with pack.open("setup.py") as setup:
                                 update = setup.read()
                                 open("temp/setup.py", "wb").write(update)
-                                p = subprocess.Popen(["python", "temp/setup.py"], stdout=subprocess.PIPE)
+                                p = subprocess.Popen([sys.executable, "temp/setup.py"], stdout=subprocess.PIPE)
                                 result = p.wait(timeout=10)
                                 time.sleep(0.5)
 
@@ -369,7 +369,7 @@ class restricted(commands.Cog):
                                                           "Verification - ⏳**")
                         await msg.edit(embed=embed)
 
-                        p = subprocess.Popen(["python", "main.py"])
+                        p = subprocess.Popen([sys.executable, "main.py"])
 
                         time.sleep(2)
 
@@ -428,7 +428,7 @@ class restricted(commands.Cog):
 
                             open("bot log.txt", "w").write(str(ctx.channel.id))
 
-                            subprocess.Popen(["python", "main.py"])
+                            subprocess.Popen([sys.executable, "main.py"])
 
                             sys.exit()
 
@@ -477,7 +477,7 @@ class restricted(commands.Cog):
 
                     saveconfig("close")
                     await sleep(5)
-                    subprocess.Popen(["python", "main.py"])
+                    subprocess.Popen([sys.executable, "main.py"])
                     sys.exit()
 
 
