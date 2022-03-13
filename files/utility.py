@@ -213,8 +213,6 @@ class utility(commands.Cog):
                     raise commands.errors.BadArgument("Invalid parameters.")
 
             if title and description:
-                checkstring = title + description
-
                 if len(title) >= 256:
                     raise commands.errors.BadArgument(message="Title must be less than 256 characters.")
                 elif len(description) >= 2048:
