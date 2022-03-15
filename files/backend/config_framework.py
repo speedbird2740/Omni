@@ -70,7 +70,6 @@ def createconfig(scope) -> dict:
         botdata["log"] = []
         botdata["blacklist"] = []
         botdata["violations"] = {}
-        botdata["warnings"] = {}
         botdata["ratings"] = {}
         botdata["slapcount"] = {}
         botdata["fightcount"] = {}

@@ -579,7 +579,7 @@ class events(commands.Cog):
         botdata["log"].append(f"{date} created settings for new server.")
 
         msg = discord.Embed(title="Hello there!",
-                            description="I am Omni. My prefix is `./`."
+                            description=f"I am {credentials['name']}. My prefix is `./`."
                                         " Some of my most popular commands include:\n"
                                         "`./slap <user>`\n`./fight <user>`\n`./rate <thing>`\n`./afk <message>`",
                             color=discord.Colour.dark_blue())

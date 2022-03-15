@@ -52,8 +52,8 @@ class utility(commands.Cog):
 
                 if img_srv["service"] == 1:
                     params = {
-                        "key": credentials["api_key"],
-                        "cx": credentials["client_cx"],
+                        "key": img_srv["api_key"],
+                        "cx": img_srv["client_cx"],
                         "q": query,
                         "searchType": "image",
                         "safe": "active"
