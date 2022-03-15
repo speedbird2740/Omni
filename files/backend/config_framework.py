@@ -49,10 +49,6 @@ def createconfig(scope) -> dict:
         guilddata["config"]["antiraid"]["revokeinvites"] = False
         guilddata["config"]["antiraid"]["raiseverification"] = False
 
-        guilddata["bulletins"] = {}
-        guilddata["bulletins"]["to-do"] = {}
-        guilddata["bulletins"]["events"] = {}
-
         return guilddata
 
     elif scope == "other":
