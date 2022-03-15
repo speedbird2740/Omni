@@ -13,7 +13,7 @@
  - NASA API key (may still work without one)
 
 
-## Instalation 
+## Installation 
 1. Download the latest setup cli utility.
 2. Create a new folder and copy the setup utility in there.
 3. Open a terminal session in the folder.

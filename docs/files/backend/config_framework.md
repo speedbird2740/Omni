@@ -95,5 +95,4 @@ Saves the changed settings to their respective JSON files.
 
 `deltas` must be a list or tuple. Only two values are valid in the parameter:
 (a) `"globalconfig"`, which pertains to any setting and/or value that is not limited to a server (guild),
-and (b) the SHA256 hash of a server (guild) id, which pertains to the settings
-and values that only affects the server.
+and (b) the SHA256 hash of a server (guild) id, which pertains to server-specfic settings.
