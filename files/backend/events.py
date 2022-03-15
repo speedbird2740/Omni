@@ -14,6 +14,7 @@ from files.backend.config_framework import loadconfig, saveconfig, listener, get
 
 botdata = {}
 credentials = {}
+antiraidlog = {}
 whitelist = (
     "dumb", "stupid", "idiot", "nerd", "wtf", "len", "crap", "lmao", "analy", "gae", "gay", "god", "stroke", "weed",
     "omg", "ugly")
@@ -352,11 +353,26 @@ class events(commands.Cog):
     async def on_member_join(self, member: discord.Member):
         global botdata
 
-        hash = gethash(member.guild.id)
-        guilddata = botdata[hash]
+        guildidhash = gethash(member.guild.id)
+        guilddata = botdata[guildidhash]
         raidconfig = guilddata["config"]["antiraid"]
 
         if raidconfig["enabled"]:
+            embed = discord.Embed(title=f"You've been automatically kicked or banned from {member.guild.name}",
+                                  color=discord.Colour.gold())
+            embed.add_field(name="Why?", value=f"There are several reasons why you may have been kicked or banned:\n\n"
+                                               f"**-** Anti-raid has been triggered.\n"
+                                               f"**-** Your username has profane, offensive,"
+                                               f" or hateful language.\n"
+                                               f"**-** Your username, or parts of your username, are "
+                                               f"blacklisted by {member.guild.name}.")
+            embed.add_field(name="What can I do?", value="You can:\n\n"
+                                                         "**-** Remove profane, hateful, or offensive language"
+                                                         " from your username.\n"
+                                                         "**-** Contact the moderators of"
+                                                         f" {member.guild.name}.\n"
+                                                         f"**-** Try again later.")
+
             if raidconfig["underraid"]:
                 if raidconfig["mode"] == "active":
                     await sleep(0.4)
@@ -366,24 +382,9 @@ class events(commands.Cog):
                     else:
                         action = "banned"
 
-                    embed = discord.Embed(title=f"You've been automatically {action} from {member.guild.name}",
-                                          color=discord.Colour.gold())
-                    embed.add_field(name="Why?", value=f"There are several reasons why you may have been {action}:\n\n"
-                                                       f"**-** Anti-raid has been triggered.\n"
-                                                       f"**-** Your username has profane, offensive,"
-                                                       f" or hateful language.\n"
-                                                       f"**-** Your username, or parts of your username, are "
-                                                       f"blacklisted by {member.guild.name}.")
-                    embed.add_field(name="What can I do?", value="You can:\n\n"
-                                                                 "**-** Remove profane, hateful, or offensive language"
-                                                                 " from your username.\n"
-                                                                 "**-** Contact the moderators of"
-                                                                 f" {member.guild.name}.\n"
-                                                                 f"**-** Try again later.")
-
                     try:
                         saveconfig({
-                            f"guild.{hash}.config.antiraid.count.add": None
+                            f"guild.{guildidhash}.config.antiraid.count.add": None
                         })
 
                         if raidconfig["count"] > 3:
@@ -412,7 +413,7 @@ class events(commands.Cog):
                 else:
                     raidconfig["underraid"] = False
                     saveconfig({
-                        f"guild.{hash}.config.antiraid.underraid": False
+                        f"guild.{guildidhash}.config.antiraid.underraid": False
                     })
 
                 return
@@ -422,20 +423,6 @@ class events(commands.Cog):
                 await sleep(0.2)
 
                 action = "kicked"
-                embed = discord.Embed(title=f"You've been automatically {action} from {member.guild.name}",
-                                      color=discord.Colour.gold())
-                embed.add_field(name="Why?", value=f"There are several reasons why you may have been {action}:\n\n"
-                                                   f"**-** Anti-raid has been triggered.\n"
-                                                   f"**-** Your username has profane, offensive,"
-                                                   f" or hateful language.\n"
-                                                   f"**-** Your username, or parts of your username, are "
-                                                   f"blacklisted by {member.guild.name}.")
-                embed.add_field(name="What can I do?", value="You can:\n\n"
-                                                             "**-** Remove profane, hateful, or offensive language"
-                                                             " from your username.\n"
-                                                             "**-** Contact the moderators of"
-                                                             f" {member.guild.name}.\n"
-                                                             f"**-** Try again later.")
 
                 try:
                     await member.send(embed=embed)
@@ -459,26 +446,6 @@ class events(commands.Cog):
                                                                                    "blacklist"]):
                 await sleep(0.2)
 
-                if raidconfig["action"] == "kick":
-                    action = "kicked"
-                else:
-                    action = "banned"
-
-                embed = discord.Embed(title=f"You've been automatically {action} from {member.guild.name}",
-                                      color=discord.Colour.gold())
-                embed.add_field(name="Why?", value=f"There are several reasons why you may have been {action}:\n\n"
-                                                   f"**-** Anti-raid has been triggered.\n"
-                                                   f"**-** Your username has profane, offensive,"
-                                                   f" or hateful language.\n"
-                                                   f"**-** Your username, or parts of your username, are "
-                                                   f"blacklisted by {member.guild.name}.")
-                embed.add_field(name="What can I do?", value="You can:\n\n"
-                                                             "**-** Remove profane, hateful, or offensive language"
-                                                             " from your username.\n"
-                                                             "**-** Contact the moderators of"
-                                                             f" {member.guild.name}.\n"
-                                                             f"**-** Try again later.")
-
                 try:
                     await member.send(embed=embed)
                 except:
@@ -493,22 +460,24 @@ class events(commands.Cog):
                         await member.ban(reason="Automatic action carried out (anti-raid triggered)")
 
                         await sleep(1)
-                        await member.guild.system_channel.send(f"{action} {member.mention}: blacklisted nickname")
+                        await member.guild.system_channel.send(f"{raidconfig['action']} {member.mention}: blacklisted nickname")
                 except Exception as error:
                     await sleep(1)
                     await member.guild.system_channel.send(f"Could not {raidconfig['action']} {member.mention}!")
 
             temp = 0
             msg = ""
-            saveconfig({
-                f"guild.{hash}.config.antiraid.log.append": {"id": member.id, "time": time.perf_counter()}
-            })
+
+            if guildidhash not in antiraidlog:
+                antiraidlog[guildidhash] = []
+
+            antiraidlog[guildidhash].append({"id": member.id, "time": time.perf_counter()})
             membercount = raidconfig["rate"][0]
             log = []
 
-            if len(raidconfig["log"]) >= membercount:
+            if len(antiraidlog[guildidhash]) >= membercount:
                 for i in range(1, membercount + 1):
-                    log.append(raidconfig["log"][-i])
+                    log.append(antiraidlog[guildidhash][-i])
 
                 for event in log:
                     if "lastevent" in locals():
@@ -521,7 +490,7 @@ class events(commands.Cog):
                 if raidconfig["rate"][1] > temp > 0:
                     raidconfig["underraid"] = True
                     saveconfig({
-                        f"guild.{hash}.config.antiraid.underraid": True
+                        f"guild.{guildidhash}.config.antiraid.underraid": True
                     })
 
                     for role in member.guild.roles:
