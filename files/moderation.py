@@ -5,7 +5,7 @@ from asyncio import sleep
 import discord
 from better_profanity import profanity
 from discord.ext import commands
-from discord.ext.commands import has_permissions
+from discord.ext.commands import has_permissions, bot_has_permissions
 
 from files.backend.config_framework import loadconfig, saveconfig, listener, gethash, processdeltas
 
@@ -19,6 +19,7 @@ class moderation(commands.Cog):
 
     @commands.command(description="Detect and protect against server raids.")
     @has_permissions(kick_members=True)
+    @bot_has_permissions(kick_members=True)
     @commands.cooldown(1, 3, commands.BucketType.user)
     async def antiraid(self, ctx, setting=None, value=None):
         hash = gethash(ctx.guild.id)

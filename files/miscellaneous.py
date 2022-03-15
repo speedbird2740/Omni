@@ -62,8 +62,6 @@ class miscellaneous(commands.Cog):
                             color=discord.Colour.dark_blue())
 
         msg = msg.add_field(name="------------", value=cats)
-        msg = msg.add_field(name="Got questions, concerns?",
-                            value="File the form at https://example.com", inline=False)
 
         try:
             cat = args[1]
@@ -82,20 +80,21 @@ class miscellaneous(commands.Cog):
     @commands.command(description="View the changelog for the latest update")
     @commands.cooldown(1, 2, commands.BucketType.user)
     async def changelog(self, ctx):
-        msg = discord.Embed(title=f"Changelog for v12a", color=discord.Colour.dark_blue())
+        msg = discord.Embed(title=f"Changelog for v{version}", color=discord.Colour.dark_blue())
         msg.add_field(name="New commands/features",
-                      value="**-** Testing completely reworked config/data sync and storage system.\n"
-                            "\t**-** Should fix config issues causing settings not to save.",
+                      value="**-** You can now set a separate bot messages channel. See `./config` for more information.\n"
+                            "**-** Revamped welcome message.",
                       inline=False)
         msg.add_field(name="What's changed",
-                      value="**-** `./showconfig` is now merged with `./config` (`./config show`).")
+                      value="**-** Removed a few unused settings.\n"
+                            "**-** To better deal with rate limiting, anti-raid will no longer log ")
         msg.add_field(name="What's fixed",
-                      value="**-** Mitigates error message when adding me to a server.")
-        msg.add_field(name=f"Changelog for {version}",
-                      value="**-** Fixed a bug that may appear when trying to communicate with modmail.",
+                      value="")
+        msg.add_field(name=f"Changelog for v12",
+                      value="**-** Completely reworked config/data sync and storage system.\n"
+                            "**-** `./showconfig` is now merged with `./config` (`./config show`).\n"
+                            "**-** Mitigates error message when adding me to a server.",
                       inline=False)
-        msg.add_field(name="Got questions, concerns?",
-                      value="File the form at https://example.com", inline=False)
 
         await ctx.send(embed=msg)
 

@@ -23,20 +23,20 @@ class configuration(commands.Cog):
             guildconfig = botdata[hash]["config"]
 
             if setting == "show":
-                if not guildconfig["botenabled"]:
-                    botstatus = "No"
-                else:
+                if guildconfig["botenabled"]:
                     botstatus = "Yes"
-
-                if not guildconfig["someoneping"]:
-                    pingstatus = "No"
                 else:
+                    botstatus = "No"
+
+                if guildconfig["someoneping"]:
                     pingstatus = "Yes"
-
-                if not guildconfig["greetings"]:
-                    replystatus = "No"
                 else:
+                    pingstatus = "No"
+
+                if guildconfig["greetings"]:
                     replystatus = "Yes"
+                else:
+                    replystatus = "No"
 
                 if guildconfig["filterprofanity"]:
                     profanityfilter = "Yes"
@@ -48,12 +48,18 @@ class configuration(commands.Cog):
                 else:
                     deleteprofanity = "No"
 
+                if guildconfig["log_channel"] is None:
+                    log_channel = "Guild System Channel"
+                else:
+                    log_channel = self.bot.get_channel(guildconfig["log_channel"]).mention
+
                 embed = discord.Embed(title="General configuration", color=discord.Colour.dark_blue())
                 embed.add_field(name="Bot enabled", value=botstatus)
                 embed.add_field(name="@someone enabled", value=pingstatus)
                 embed.add_field(name="Greetings enabled", value=replystatus)
                 embed.add_field(name="Profanity filter enabled", value=profanityfilter)
                 embed.add_field(name="Delete profanity", value=deleteprofanity)
+                embed.add_field(name="Bot messages channel", value=log_channel)
 
                 await ctx.send(embed=embed)
 
@@ -120,6 +126,23 @@ class configuration(commands.Cog):
                                 f"guild.{hash}.config.deleteprofanity": True
                             })
                             await ctx.send("Automatic deletion of profanity enabled for this server!")
+
+                    elif setting == "logchannel":
+                        if value == "default":
+                            saveconfig({
+                                f"guild.{hash}.config.log_channel": None
+                            })
+
+                            await ctx.send("Bot messages channel set to guild system channel!")
+                        else:
+                            channel = await commands.TextChannelConverter().convert(ctx, value)
+
+                            saveconfig({
+                                f"guild.{hash}.config.log_channel": channel.id
+                            })
+
+                            await ctx.send(f"Bot messages channel set to {channel.mention}!")
+
                 else:
                     raise commands.errors.MissingPermissions(missing_perms=["manage messages"])
 
@@ -135,6 +158,9 @@ class configuration(commands.Cog):
                             value="```./config filterprofanity enable/disable```", inline=False)
             embed.add_field(name="Enable or disable automatic deletion of profanity",
                             value="```./config deleteprofanity enable/disable```", inline=False)
+            embed.add_field(name="Set bot messages channel",
+                            value="```./config logchannel <channel mention>```To set it to the guild system channel, use"
+                                  "```./config logchannel default```")
             embed.add_field(name="Show general configuration",
                             value="```./config show```")
             await ctx.send(embed=embed)

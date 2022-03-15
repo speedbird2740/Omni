@@ -13,7 +13,7 @@ import requests
 from cryptography.fernet import Fernet
 from discord.ext import commands
 
-version = "12"
+version = "12.1"
 
 intents = discord.Intents.default()
 intents.members = True

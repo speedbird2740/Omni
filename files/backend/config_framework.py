@@ -36,11 +36,11 @@ def createconfig(scope) -> dict:
         guilddata["config"]["deleteprofanity"] = False
         guilddata["config"]["noafkchannels"] = []
         guilddata["config"]["modmailchannel"] = None
+        guilddata["config"]["log_channel"] = None
         guilddata["config"]["antiraid"] = {}
         guilddata["config"]["antiraid"]["enabled"] = False
-        guilddata["config"]["antiraid"]["mode"] = "passive"
+        guilddata["config"]["antiraid"]["mode"] = "active"
         guilddata["config"]["antiraid"]["rate"] = [2, 4]
-        guilddata["config"]["antiraid"]["log"] = []
         guilddata["config"]["antiraid"]["underraid"] = False
         guilddata["config"]["antiraid"]["banprofanenicks"] = False
         guilddata["config"]["antiraid"]["blacklist"] = []

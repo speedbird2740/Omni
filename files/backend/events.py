@@ -36,7 +36,6 @@ class events(commands.Cog):
             if not ctx.author.bot:
                 guildidhash = gethash(ctx.guild.id)
                 uidhash = gethash(ctx.author.id)
-                log = botdata["log"]
 
                 guildconfig = botdata[guildidhash]["config"]
                 globalconfig = botdata["global"]
@@ -144,8 +143,8 @@ class events(commands.Cog):
                         if ping:
                             await ctx.channel.send(member.mention)
                             pingcooldown.append(f"{hash}:{time.perf_counter()}")
-                    if not ctx.author.id == "BOT_ID" and "@someone" in ctx.content.lower():
 
+                    if "@someone" in ctx.content.lower():
                         if not guildconfig["someoneping"]:
 
                             await ctx.channel.send(
@@ -357,6 +356,12 @@ class events(commands.Cog):
         guilddata = botdata[guildidhash]
         raidconfig = guilddata["config"]["antiraid"]
 
+        if type(guilddata["config"]["log_channel"]) == int:
+            channel = self.bot.get_channel(guilddata["config"]["log_channel"])
+
+        else:
+            channel = member.guild.system_channel
+
         if raidconfig["enabled"]:
             embed = discord.Embed(title=f"You've been automatically kicked or banned from {member.guild.name}",
                                   color=discord.Colour.gold())
@@ -401,14 +406,9 @@ class events(commands.Cog):
                         else:
                             await member.ban(reason="Automatic action carried out (anti-raid triggered)")
 
-                        if raidconfig["count"] < 4:
-                            await sleep(1)
-                            await member.guild.system_channel.send(f"{action} {member.mention}: anti-raid triggered")
-                        elif raidconfig["count"] == 4:
-                            await member.guild.system_channel.send(f"Anti-raid notifications paused")
                     except:
                         await sleep(1)
-                        await member.guild.system_channel.send(f"Could not {raidconfig['action']} {member.mention}!")
+                        await channel.send(f"Could not {raidconfig['action']} {member.mention}!")
 
                 else:
                     raidconfig["underraid"] = False
@@ -434,16 +434,14 @@ class events(commands.Cog):
                 try:
                     await member.kick(reason="Profane nickname")
                     await sleep(1)
-                    await member.guild.system_channel.send("Kicked {member.mention}: Profane nickname")
+
+                    await channel.send(f"kick {member.mention}: profane nickname")
                 except:
                     await sleep(1)
-                    await member.guild.system_channel.send(f"Could not kick {member.mention}!")
+                    await channel.send(f"Could not kick {member.mention}!")
 
-            elif len(guilddata["config"]["antiraid"]["blacklist"]) > 0 and any(name
-                                                                               in member.display_name.lower() for name
-                                                                               in
-                                                                               guilddata["config"]["antiraid"][
-                                                                                   "blacklist"]):
+            elif len(guilddata["config"]["antiraid"]["blacklist"]) > 0 \
+                    and any(name in member.display_name.lower() for name in guilddata["config"]["antiraid"]["blacklist"]):
                 await sleep(0.2)
 
                 try:
@@ -455,15 +453,16 @@ class events(commands.Cog):
 
                 try:
                     if raidconfig["action"] == "kick":
-                        await member.kick(reason="Automatic action carried out (anti-raid triggered)")
+                        await member.kick(reason="Blacklisted nickname")
                     elif raidconfig["action"] == "ban":
-                        await member.ban(reason="Automatic action carried out (anti-raid triggered)")
-
+                        await member.ban(reason="Blacklisted nickname")
                         await sleep(1)
-                        await member.guild.system_channel.send(f"{raidconfig['action']} {member.mention}: blacklisted nickname")
+
+                        await channel.send(f"{raidconfig['action']} {member.mention}: blacklisted nickname")
+
                 except Exception as error:
                     await sleep(1)
-                    await member.guild.system_channel.send(f"Could not {raidconfig['action']} {member.mention}!")
+                    await channel.send(f"Could not {raidconfig['action']} {member.mention}!")
 
             temp = 0
             msg = ""
@@ -500,7 +499,7 @@ class events(commands.Cog):
 
                     msg += "Anti-raid has been triggered! To disable it, use `./antiraid end`"
 
-                    await member.guild.system_channel.send(msg)
+                    await channel.send(msg)
                     await sleep(1)
 
                     if raidconfig["mode"] == "active":
@@ -536,31 +535,29 @@ class events(commands.Cog):
     async def on_guild_join(self, guild):
         global botdata
 
-        date = datetime.datetime.now().strftime(r"%m/%d/%Y %H:%M:%S")
-        botdata["log"].append(f"{date} joined a server.")
-
         hash = gethash(guild.id)
         saveconfig({
             f"guild.{hash}.createconfig": None
         })
-        time.sleep(3)
 
-        botdata["log"].append(f"{date} created settings for new server.")
-
-        msg = discord.Embed(title="Hello there!",
-                            description=f"I am {credentials['name']}. My prefix is `./`."
-                                        " Some of my most popular commands include:\n"
-                                        "`./slap <user>`\n`./fight <user>`\n`./rate <thing>`\n`./afk <message>`",
+        msg = discord.Embed(title="Thanks for adding me!",
+                            description=f"I am {credentials['name']}. Here are some of my features. "
+                                        f"For more information, see `./help`",
                             color=discord.Colour.dark_blue())
-        msg = msg.add_field(name="My configuration system",
-                            value="Admins and moderators, You can"
-                                  " change my configuration using `./config`. To find out more"
-                                  ", run that command without any arguments.")
-        msg = msg.add_field(name="Automod",
-                            value="I have a profanity database that flags, deletes, and filters messages containing"
-                                  " profanity. You can configure it to warn,"
-                                  " or delete and filter the message").add_field(
-            name="General support", value="Run `./help` to get help")
+        msg.add_field(name="Utility",
+                      value="**-** Image lookup (`./image`)\n"
+                            "**-** AFK status (`./afk`)\n"
+                            "**-** Reminders (`./remind`)\n"
+                            "**-** Announcements (`./announce`)")
+        msg.add_field(name="Moderation",
+                      value="**-** Modmail (`./modmail`)\n"
+                            "**-** Anti-raid (`./antiraid`)\n"
+                            "**-** Profanity filter (`./config`)\n"
+                            "**-** Server audit (`./audit`)")
+        msg.add_field(name="Miscellaneous",
+                      value="**-** SpaceX information (`./spacex`)\n"
+                            "**-** NASA astronomy picture of the day (`./apod`)\n"
+                            "**-** @someone ping\n")
 
         await sleep(5)
 
