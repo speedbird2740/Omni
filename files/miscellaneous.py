@@ -83,6 +83,7 @@ class miscellaneous(commands.Cog):
         msg = discord.Embed(title=f"Changelog for v{version}", color=discord.Colour.dark_blue())
         msg.add_field(name="New commands/features",
                       value="**-** You can now set a separate bot messages channel. See `./config` for more information.\n"
+                            "**-** The performance and reliability of anti-raid has been improved.\n"
                             "**-** Revamped welcome message.",
                       inline=False)
         msg.add_field(name="What's changed",
