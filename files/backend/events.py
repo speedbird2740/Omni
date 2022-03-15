@@ -611,27 +611,26 @@ class events(commands.Cog):
         global blacklist
 
         strerror = str(error)
-        date = datetime.datetime.now().strftime(r"%m/%d/%Y %H:%M:%S")
-        red = discord.Colour.red()
+        yellow = discord.Colour.gold()
 
         if not ctx.author.bot:
             if "cooldown" in strerror:
-                await ctx.reply(embed=discord.Embed(description=f":x: {error}", color=red), delete_after=5,
+                await ctx.reply(embed=discord.Embed(description=f":warning: {error}", color=yellow), delete_after=5,
                                 mention_author=False)
 
-            elif "permission" in strerror:
-                await ctx.reply(embed=discord.Embed(description=f":x: {strerror}", color=red), delete_after=5,
+            if isinstance(error, commands.errors.MissingPermissions):
+                await ctx.reply(embed=discord.Embed(description=f":warning: {strerror}", color=yellow), delete_after=5,
                                 mention_author=False)
-            elif "not found" in strerror:
+            elif isinstance(error, commands.errors.CommandNotFound):
                 await self.bot.get_cog("miscellaneous").help(ctx=ctx)
-            elif "missing" in strerror:
-                await ctx.reply(embed=discord.Embed(description=f":x: {strerror}", color=red), delete_after=5,
+            elif isinstance(error, commands.errors.MissingRequiredArgument):
+                await ctx.reply(embed=discord.Embed(description=f":warning: {strerror}", color=yellow), delete_after=5,
                                 mention_author=False)
-            elif type(error) == discord.ext.commands.errors.BadArgument:
-                await ctx.reply(embed=discord.Embed(description=f":x: {strerror}", color=red), delete_after=5,
+            elif isinstance(error, commands.errors.BadArgument):
+                await ctx.reply(embed=discord.Embed(description=f":warning: {strerror}", color=yellow), delete_after=5,
                                 mention_author=False)
             else:
-                await ctx.reply(embed=discord.Embed(description=f":x: Internal error", color=red), delete_after=5,
+                await ctx.reply(embed=discord.Embed(description=f":warning: Internal error", color=yellow), delete_after=5,
                                 mention_author=False)
 
                 await sleep(1)
@@ -639,8 +638,6 @@ class events(commands.Cog):
                 channel = self.bot.get_channel(credentials["log_channel"])
                 error = "".join(traceback.format_exception(type(error), error, error.__traceback__))
                 await channel.send(f"```python\n{error}```")
-
-                botdata["errors"].append(f"`./{ctx.command}` on `{date}` ```fix\n{strerror}```")
 
 
 def syncdata():
