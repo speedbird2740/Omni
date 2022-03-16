@@ -163,7 +163,7 @@ class restricted(commands.Cog):
                     await ctx.send("@someone ping disabled globally!")
                 elif value == "enable":
                     saveconfig({
-                        "global": ["somepneping", True]
+                        "global": ["someoneping", True]
                     })
                     await ctx.send("@someone ping enabled globally!")
 
