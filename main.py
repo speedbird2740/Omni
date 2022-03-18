@@ -13,11 +13,20 @@ import requests
 from cryptography.fernet import Fernet
 from discord.ext import commands
 
-version = "12.1"
+
+credentials = json.load(open("data/credentials.json"))
+
 
 intents = discord.Intents.default()
 intents.members = True
-bot = commands.Bot(command_prefix='./', intents=intents, help_command=None)
+bot = commands.Bot(command_prefix=credentials["prefix"], intents=intents, help_command=None)
+
+bot.owner_id = credentials["owner_id"]
+api_key = credentials["api_key"]
+
+version = "12.1"
+pingcooldown = []
+updatesuccess = True
 
 
 def backgroundtasks():
@@ -25,7 +34,7 @@ def backgroundtasks():
 
     while True:
         bot.loop.create_task(bot.change_presence(
-            activity=discord.Activity(type=discord.ActivityType.playing, name=f"v{version} | ./changelog"),
+            activity=discord.Activity(type=discord.ActivityType.playing, name=f"v{version} | {credentials['prefix']}changelog"),
             status=discord.Status.idle))
         time.sleep(28800 if count < 1 else 60)
         bot.loop.create_task(bot.change_presence(
@@ -141,9 +150,6 @@ class restricted(commands.Cog):
                     saveconfig({
                         "global": ["botenabled", True]
                     })
-                    await self.bot.change_presence(status=discord.Status.idle,
-                                                   activity=discord.Activity(type=discord.ActivityType.playing,
-                                                                             name=f"v{version} | ./changelog"))
                     await ctx.send("Bot enabled globally!")
                 elif value == "restart":
                     open("bot log.txt", "w").write(str(ctx.channel.id))
@@ -214,6 +220,8 @@ class restricted(commands.Cog):
 
             elif module == "settings":
                 if value == "reset":
+                    msg = await ctx.send("Processing...")
+
                     saveconfig({
                         "createconfig": None
                     })
@@ -225,15 +233,7 @@ class restricted(commands.Cog):
                             f"guild.{guildidhash}.createconfig": None
                         })
 
-                    await ctx.send("Successfully reset all settings!")
-
-                    await self.bot.change_presence(status=discord.Status.idle,
-                                              activity=discord.Activity(type=discord.ActivityType.watching,
-                                                                        name="settings have been reset"))
-                    await sleep(3600)
-                    await self.bot.change_presence(status=discord.Status.idle,
-                                              activity=discord.Activity(type=discord.ActivityType.playing,
-                                                                        name=f"v{version} | ./changelog"))
+                    await msg.edit("Successfully reset all settings!")
 
             elif module == "exec":
                 code = ctx.message.content.replace("./admin exec ```py\n", "").replace("```", "")
@@ -242,7 +242,7 @@ class restricted(commands.Cog):
             await ctx.send(embed=discord.Embed(
                 description="Only the developer behind this bot can use this command."
                             " If you are a server admin or moderator, make sure you have the manage messages"
-                            " permission and use `./config` instead"))
+                            " permission and use `./config` instead", color=discord.Colour.red()))
 
     @commands.command()
     async def update(self, ctx):
@@ -485,13 +485,6 @@ if __name__ == "__main__":
     from files.backend.config_framework import listener, saveconfig, gethash, loadconfig, processdeltas
 
     botdata = loadconfig()
-    credentials = json.load(open("data/credentials.json"))
-
-    bot.owner_id = credentials["owner_id"]
-    pingcooldown = []
-
-    api_key = credentials["api_key"]
-    updatesuccess = True
 
     bot.add_cog(restricted(bot))
     bot.load_extension("files.backend.events")

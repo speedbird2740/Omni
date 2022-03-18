@@ -8,7 +8,6 @@ import requests
 from better_profanity import profanity
 from discord.ext import commands
 from discord.ext.commands import HelpCommand as dhelp
-from discord.ext.commands import has_permissions
 
 from files.backend.config_framework import gethash, saveconfig, loadconfig, listener, processdeltas
 
@@ -29,7 +28,7 @@ class utility(commands.Cog):
 
         if len(ctx.message.content.split(" ")) > 1:
             links = []
-            query = ctx.message.content.replace("./image ", "").replace(" ", "+")
+            query = ctx.message.content.replace(f"{credentials['prefix']}image ", "").replace(" ", "+")
             hash = gethash(query.lower())
 
             if profanity.contains_profanity(query):
@@ -95,7 +94,7 @@ class utility(commands.Cog):
                 del searchcache[hash]
         else:
             embed = discord.Embed(title="Image lookup", color=discord.Colour.dark_blue())
-            embed.add_field(name="Usage", value="```./image <query>```")
+            embed.add_field(name="Usage", value=f"```{credentials['prefix']}image <query>```")
 
             await ctx.send(embed=embed)
 
@@ -106,7 +105,7 @@ class utility(commands.Cog):
         afkconfig = ["bind", "unbind"]
 
         if len(args) > 1 and not args[1] in afkconfig:
-            afkmsg = ctx.message.content.replace("./afk ", "")
+            afkmsg = ctx.message.content.replace(f"{credentials['prefix']}afk ", "")
             afkmsg = dhelp().remove_mentions(afkmsg)
             memberidhash = gethash(ctx.author.id)
 
@@ -140,116 +139,6 @@ class utility(commands.Cog):
             })
 
             await ctx.send(f"I've set your afk: {afkmsg}")
-
-    @commands.command(description="Set a reminder with context/description")
-    @commands.cooldown(1, 10, commands.BucketType.user)
-    async def remind(self, ctx):
-        args = ctx.message.content.split(" ")
-
-        if len(args) > 2:
-            time = args[1]
-
-            content = ctx.message.content.replace(f"./remind {time} ", "")
-            print(content)
-            content = dhelp().remove_mentions(content)
-
-            if time.endswith("m"):
-                seconds = 60 * float(time.replace("m", ""))
-
-                await ctx.send(f"I will remind you in {time}: {content}")
-                await sleep(seconds)
-                await ctx.send(f"Time's up {ctx.author.mention}! {content}")
-            elif time.endswith("h"):
-                seconds = 3600 * float(time.replace("h", ""))
-
-                await ctx.send(f"I will remind you in {time}: {content}")
-                await sleep(seconds)
-                await ctx.send(f"Time's up {ctx.author.mention}! {content}")
-            elif time.endswith("d"):
-                seconds = 86400 * float(time.replace("d", ""))
-
-                await ctx.send(f"I will remind you in {time}: {content}")
-                await sleep(seconds)
-                await ctx.send(f"Time's up {ctx.author.mention}! {content}")
-            else:
-                await ctx.send(
-                    embed=discord.Embed(title="Reminders", color=discord.Colour.dark_blue()).add_field(name="Format",
-                                                                                                       value="`./remind "
-                                                                                                             "<time> "
-                                                                                                             "<description>`\n\nThere are "
-                                                                                                             " three options for `<time>`: "
-                                                                                                             "`m` (minutes), `h` (hours), `d` "
-                                                                                                             "(days)\n\nExample usage:"
-                                                                                                             " `./remind 30m prepare for"
-                                                                                                             " the spacewalk`"))
-        else:
-            await ctx.send(
-                embed=discord.Embed(title="Reminders", color=discord.Colour.dark_blue()).add_field(name="Format",
-                                                                                                   value="`./remind <time> <description>`\n\nThere are three options for `<time>`: `m` (minutes), `h` (hours), `d` (days)\n\nExample usage: `./remind 30m prepare for the spacewalk`"))
-
-    @commands.command(description="Send an announcement in an embed")
-    @has_permissions(mention_everyone=True)
-    @commands.cooldown(2, 60, commands.BucketType.user)
-    async def announce(self, ctx):
-        content = ctx.message.content
-        args = ctx.message.content.split("--")
-        del args[0]
-
-        if len(args) > 1 and "--t" in content and "--d" in content:
-            for arg in args:
-                if arg.startswith("t "):
-                    arg = list(arg)
-                    del arg[0]
-                    del arg[0]
-
-                    title = "".join(arg)
-                elif arg.startswith("d "):
-                    arg = list(arg)
-                    del arg[0]
-                    del arg[0]
-
-                    description = "".join(arg)
-                else:
-                    raise commands.errors.BadArgument("Invalid parameters.")
-
-            if title and description:
-                if len(title) >= 256:
-                    raise commands.errors.BadArgument(message="Title must be less than 256 characters.")
-                elif len(description) >= 2048:
-                    raise commands.errors.BadArgument(message="Description must be less than 2048 characters.")
-
-                resp = await ctx.send("**This will ping everyone.** Are you sure you want to continue? (y/n)")
-
-                def check(message: discord.Message):
-                    if message.author.id == ctx.author.id:
-                        return True
-                    else:
-                        return False
-
-                confirmation = await self.bot.wait_for(event="message", check=check, timeout=10)
-
-                if confirmation.content.lower() == "y":
-                    await resp.delete()
-                    await confirmation.delete()
-                else:
-                    await ctx.send("Announcement cancelled.")
-                    return
-
-                await ctx.message.delete()
-                await ctx.send(ctx.message.guild.default_role, embed=discord.Embed(title=title, description=description,
-                                                                                   color=discord.Colour.dark_blue()))
-        else:
-            embed = discord.Embed(title="Announcements", color=discord.Colour.dark_blue())
-            embed.add_field(name="Usage",
-                            value="Use `--t <title>` to set the title. Use `--d <description>` to set the description."
-                                  "```./announce --t I figured it out! --d I figured out how to use this command!```")
-            await ctx.send(embed=embed)
-
-    @commands.command(description="Get positive affirmations to help you get through your day")
-    @commands.cooldown(1, 5, commands.BucketType.user)
-    async def affirmation(self, ctx):
-        affirmation = json.loads(requests.get("https://www.affirmations.dev/").text)["affirmation"]
-        await ctx.send(embed=discord.Embed(description=affirmation, color=discord.Colour.dark_blue()))
 
 
 def syncdata():

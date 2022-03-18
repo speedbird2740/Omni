@@ -1,3 +1,4 @@
+import json
 import threading
 
 import discord
@@ -6,6 +7,7 @@ from discord.ext import commands
 from files.backend.config_framework import listener, loadconfig, saveconfig, gethash, processdeltas
 
 botdata = {}
+credentials = {}
 
 
 class configuration(commands.Cog):
@@ -148,21 +150,21 @@ class configuration(commands.Cog):
 
         else:
             embed = discord.Embed(title="Configuration", color=discord.Colour.dark_blue()).set_footer(
-                text="You can also bind or unbind afk messages using ./afk bind/unbind")
-            embed.add_field(name="Enable or disable me", value="```./config bot enable/disable```", inline=False)
+                text=f"You can also bind or unbind afk messages using {credentials['prefix']}afk bind/unbind")
+            embed.add_field(name="Enable or disable me", value=f"```{credentials['prefix']}config bot enable/disable```", inline=False)
             embed.add_field(name="Enable or disable @someone",
-                            value="```./config someoneping enable/disable```", inline=False)
+                            value=f"```{credentials['prefix']}config someoneping enable/disable```", inline=False)
             embed.add_field(name="Enable or disable greetings",
-                            value="```./config greetings enable/disable```", inline=False)
+                            value=f"```{credentials['prefix']}config greetings enable/disable```", inline=False)
             embed.add_field(name="Enable or disable profanity filter",
-                            value="```./config filterprofanity enable/disable```", inline=False)
+                            value=f"```{credentials['prefix']}config filterprofanity enable/disable```", inline=False)
             embed.add_field(name="Enable or disable automatic deletion of profanity",
-                            value="```./config deleteprofanity enable/disable```", inline=False)
+                            value=f"```{credentials['prefix']}config deleteprofanity enable/disable```", inline=False)
             embed.add_field(name="Set bot messages channel",
-                            value="```./config logchannel <channel mention>```To set it to the guild system channel, use"
-                                  "```./config logchannel default```")
+                            value=f"```{credentials['prefix']}config logchannel <channel mention>```To set it to the guild system channel, use"
+                                  f"```{credentials['prefix']}config logchannel default```")
             embed.add_field(name="Show general configuration",
-                            value="```./config show```")
+                            value=f"```{credentials['prefix']}config show```")
             await ctx.send(embed=embed)
 
 
@@ -187,7 +189,9 @@ def syncdata():
 
 def setup(bot: commands.Bot):
     global botdata
+    global credentials
 
     bot.add_cog(configuration(bot))
+    credentials = json.load(open("data/credentials.json"))
     botdata = loadconfig()
     threading.Thread(target=syncdata).start()

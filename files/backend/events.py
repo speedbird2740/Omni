@@ -92,7 +92,7 @@ class events(commands.Cog):
 
                     if ctx.content.startswith("<@!BOT_ID>"):
                         await ctx.channel.send(
-                            embed=discord.Embed(description="My prefix is `./`", color=discord.Colour.dark_blue()))
+                            embed=discord.Embed(description=f"fMy prefix is `{credentials['prefix']}`", color=discord.Colour.dark_blue()))
 
                     if uidhash in botdata["afkmembers"]:
                         saveconfig({
@@ -188,22 +188,16 @@ class events(commands.Cog):
                     if random.randint(0, 10000000) < 10:
                         await ctx.reply("🍕")
 
-                    if ctx.content.startswith("./") and not ctx.author.id == self.bot.owner_id:
-                        botdata["commandscount"] += 1
-                        saveconfig({
-                            "commandscount.add": None
-                        })
-
                 elif not ctx.author.bot:
                     if ctx.author.id == self.bot.owner_id and guildconfig[
                         "botenabled"] is False \
-                            and ctx.content.startswith("./"):
+                            and ctx.content.startswith({credentials['prefix']}):
                         await ctx.channel.send("Note: I am disabled in this server")
                         await self.bot.process_commands(ctx)
 
-                    elif ctx.author.id == self.bot.owner_id and not globalconfig[
-                        "botenabled"] and ctx.content.startswith(
-                        "./"):
+                    elif ctx.author.id == self.bot.owner_id and not globalconfig["botenabled"]\
+                            and ctx.content.startswith({credentials['prefix']}):
+
                         await ctx.channel.send("Note: I am disabled globally")
                         await self.bot.process_commands(ctx)
 
@@ -214,11 +208,11 @@ class events(commands.Cog):
                             gethash(ctx.author.id) in botdata["blacklist"]:
                         await self.bot.process_commands(ctx)
 
-                    elif guildconfig["botenabled"] is False and ctx.content.startswith("./") and not \
+                    elif guildconfig["botenabled"] is False and ctx.content.startswith({credentials['prefix']}) and not \
                             gethash(ctx.author.id) in botdata["blacklist"]:
                         await ctx.channel.send(embed=discord.Embed(description="I am disabled in this server"))
 
-                    elif ctx.content.startswith("./") and not globalconfig["botenabled"] \
+                    elif ctx.content.startswith({credentials['prefix']}) and not globalconfig["botenabled"] \
                             and not gethash(ctx.author.id) in botdata["blacklist"]:
                         await ctx.channel.send(
                             embed=discord.Embed(description="I am disabled globally",
@@ -228,7 +222,7 @@ class events(commands.Cog):
         except Exception as error:
             if "private" in str(ctx.channel.type) and \
                     not gethash(ctx.author.id) in botdata["modmailexempt"] \
-                    and not ctx.content.startswith("./") and not ctx.author.bot:
+                    and not ctx.content.startswith({credentials['prefix']}) and not ctx.author.bot:
                 guilds = []
 
                 for guild in self.bot.guilds:
@@ -497,7 +491,7 @@ class events(commands.Cog):
                             msg += role.mention
                             msg += " "
 
-                    msg += "Anti-raid has been triggered! To disable it, use `./antiraid end`"
+                    msg += f"Anti-raid has been triggered! To disable it, use `{credentials['prefix']}antiraid end`"
 
                     await channel.send(msg)
                     await sleep(1)
@@ -542,22 +536,21 @@ class events(commands.Cog):
 
         msg = discord.Embed(title="Thanks for adding me!",
                             description=f"I am {credentials['name']}. Here are some of my features. "
-                                        f"For more information, see `./help`",
+                                        f"For more information, see `{credentials['prefix']}help`",
                             color=discord.Colour.dark_blue())
         msg.add_field(name="Utility",
-                      value="**-** Image lookup (`./image`)\n"
-                            "**-** AFK status (`./afk`)\n"
-                            "**-** Reminders (`./remind`)\n"
-                            "**-** Announcements (`./announce`)")
+                      value=f"**-** Image lookup (`{credentials['prefix']}image`)\n"
+                            f"**-** AFK status (`{credentials['prefix']}afk`)\n"
+                            f"**-** Announcements (`{credentials['prefix']}announce`)")
         msg.add_field(name="Moderation",
-                      value="**-** Modmail (`./modmail`)\n"
-                            "**-** Anti-raid (`./antiraid`)\n"
-                            "**-** Profanity filter (`./config`)\n"
-                            "**-** Server audit (`./audit`)")
+                      value=f"**-** Modmail (`{credentials['prefix']}modmail`)\n"
+                            f"**-** Anti-raid (`{credentials['prefix']}antiraid`)\n"
+                            f"**-** Profanity filter (`{credentials['prefix']}config`)\n"
+                            f"**-** Server audit (`{credentials['prefix']}audit`)")
         msg.add_field(name="Miscellaneous",
-                      value="**-** SpaceX information (`./spacex`)\n"
-                            "**-** NASA astronomy picture of the day (`./apod`)\n"
-                            "**-** @someone ping\n")
+                      value=f"**-** SpaceX information (`{credentials['prefix']}spacex`)\n"
+                            f"**-** NASA astronomy picture of the day (`{credentials['prefix']}apod`)\n"
+                            f"**-** @someone ping\n")
 
         await sleep(5)
 

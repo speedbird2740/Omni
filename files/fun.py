@@ -13,6 +13,7 @@ from files.backend.config_framework import listener, loadconfig, saveconfig, get
 from files.backend.webrequests import getdata
 
 botdata = {}
+credentials = {}
 slapgifs = []
 fightgifs = []
 
@@ -41,7 +42,7 @@ class fun(commands.Cog):
         except:
             embed = discord.Embed(title="Slap")
             embed.set_thumbnail(url=gif)
-            embed.add_field(name="Usage", value="```./slap @user```")
+            embed.add_field(name="Usage", value=f"```{credentials['prefix']}slap @user```")
 
             await ctx.send(embed)
             return
@@ -77,7 +78,7 @@ class fun(commands.Cog):
         except Exception:
             embed = discord.Embed(title="Fight")
             embed.set_thumbnail(url=gif)
-            embed.add_field(name="Usage", value="```./fight @valid_user```")
+            embed.add_field(name="Usage", value=f"```{credentials['prefix']}fight @valid_user```")
 
             await ctx.send(embed)
             return
@@ -96,7 +97,7 @@ class fun(commands.Cog):
     @commands.cooldown(1, 2, commands.BucketType.user)
     async def rate(self, ctx):
         if len(ctx.message.content.split(" ")) > 1:
-            item = ctx.message.content.replace("./rate ", "")
+            item = ctx.message.content.replace(f"{credentials['prefix']}rate ", "")
             itemhash = gethash(item)
 
             if itemhash in botdata["ratings"]:
@@ -113,7 +114,7 @@ class fun(commands.Cog):
                 embed=discord.Embed(description=f"I rate {item} a {rating}/10!", color=discord.Colour.dark_blue()))
         else:
             embed = discord.Embed(title="Ratings", color=discord.Colour.dark_blue())
-            embed.add_field(name="Usage", value="```./rate <item>```")
+            embed.add_field(name="Usage", value=f"```{credentials['prefix']}rate <item>```")
             await ctx.send(embed=embed)
 
     @commands.command(description="Dad jokes!")
@@ -128,7 +129,7 @@ class fun(commands.Cog):
     @commands.command(description="Get general information about a country")
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def country(self, ctx, value=None):
-        query = ctx.message.content.replace("./country ", "")
+        query = ctx.message.content.replace(f"{credentials['prefix']}country ", "")
 
         if value:
             data = json.loads(requests.get(f"https://restcountries.eu/rest/v2/name/{query}", timeout=4).text)
@@ -161,7 +162,7 @@ class fun(commands.Cog):
 
         else:
             embed = discord.Embed(title="Country lookup", color=discord.Colour.dark_blue())
-            embed.add_field(name="Usage", value="```./country <country>```")
+            embed.add_field(name="Usage", value=f"```{credentials['prefix']}country <country>```")
 
         await ctx.send(embed=embed)
 
@@ -193,7 +194,9 @@ def syncdata():
 
 def setup(bot: commands.Bot):
     global botdata
+    global credentials
 
     bot.add_cog(fun(bot))
+    credentials = json.load(open("data/credentials.json"))
     botdata = loadconfig()
     threading.Thread(target=syncdata).start()

@@ -1,3 +1,4 @@
+import json
 import time
 
 import discord
@@ -7,6 +8,7 @@ from discord.ext.commands import has_permissions
 from main import version
 
 cogs = ["utility", "fun", "space", "miscellaneous", "moderation", "configuration"]
+credentials = {}
 
 
 class miscellaneous(commands.Cog):
@@ -58,7 +60,7 @@ class miscellaneous(commands.Cog):
         args = ctx.message.content.split(" ")
         msg = discord.Embed(title="Help",
                             description=f"Here is a list of all command categories. For more information on a category,"
-                                        f" use `./help <category>`.",
+                                        f" use `{credentials['prefix']}help <category>`.",
                             color=discord.Colour.dark_blue())
 
         msg = msg.add_field(name="------------", value=cats)
@@ -68,7 +70,7 @@ class miscellaneous(commands.Cog):
             commands = self.bot.get_cog(cat).get_commands() if cat in cogs else None
 
             for command in commands:
-                comms += f"`./{command.name}` - {command.description}\n"
+                comms += f"`{credentials['prefix']}{command.name}` - {command.description}\n"
 
             msg = discord.Embed(title=cat.capitalize() + " commands", description=comms,
                                 color=discord.Colour.dark_blue())
@@ -82,18 +84,20 @@ class miscellaneous(commands.Cog):
     async def changelog(self, ctx):
         msg = discord.Embed(title=f"Changelog for v{version}", color=discord.Colour.dark_blue())
         msg.add_field(name="New commands/features",
-                      value="**-** You can now set a separate bot messages channel. See `./config` for more information.\n"
+                      value=f"**-** You can now set a separate bot messages channel. See `{credentials['prefix']}config` for more information.\n"
                             "**-** The performance and reliability of anti-raid has been improved.\n"
                             "**-** Revamped welcome message.",
                       inline=False)
         msg.add_field(name="What's changed",
                       value="**-** Removed a few unused settings.\n"
-                            "**-** To better deal with rate limiting, anti-raid will no longer log ")
+                            "**-** To better deal with rate limiting, anti-raid will no longer log kicks/bans unless "
+                            "it was triggered by a blacklisted nickname or inappropriate nickname.")
         msg.add_field(name="What's fixed",
-                      value="")
+                      value="**-**")
         msg.add_field(name=f"Changelog for v12",
                       value="**-** Completely reworked config/data sync and storage system.\n"
-                            "**-** `./showconfig` is now merged with `./config` (`./config show`).\n"
+                            f"**-** `{credentials['prefix']}showconfig` is now merged with "
+                            f"`{credentials['prefix']}config` (`{credentials['prefix']}config show`).\n"
                             "**-** Mitigates error message when adding me to a server.",
                       inline=False)
 
@@ -129,7 +133,7 @@ class miscellaneous(commands.Cog):
                 elif name == "manage_messages":
                     issues += "**-** I cannot manage messages: Affects profanity filter.\n"
                 elif name == "mention_everyone":
-                    issues += "**-** I cannot ping @everyone. Affects `./announcements`\n"
+                    issues += f"**-** I cannot ping @everyone. Affects `{credentials['prefix']}announcements`\n"
                 elif name == "read_message_history":
                     issues += "**-** I cannot read message history. This affects any command that takes parameters," \
                               " error messages, and anti-spam messages/warnings.\n"
@@ -141,11 +145,14 @@ class miscellaneous(commands.Cog):
                               " ban new members during a raid.\n"
 
         if issues == "":
-            issues = "No issues found. If you are still experiencing problems," \
-                     " file the form at https://example.com"
+            issues = "No issues found."
 
         embed = discord.Embed(title="Potential issues", description=issues, color=discord.Colour.dark_blue())
         await ctx.send(embed=embed)
 
+
 def setup(bot: commands.Bot):
+    global credentials
+
+    credentials = json.load(open("data/credentials.json"))
     bot.add_cog(miscellaneous(bot))

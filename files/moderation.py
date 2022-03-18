@@ -1,3 +1,4 @@
+import json
 import threading
 import time
 from asyncio import sleep
@@ -10,6 +11,7 @@ from discord.ext.commands import has_permissions, bot_has_permissions
 from files.backend.config_framework import loadconfig, saveconfig, listener, gethash, processdeltas
 
 botdata = {}
+credentials = {}
 
 
 class moderation(commands.Cog):
@@ -230,42 +232,42 @@ class moderation(commands.Cog):
         else:
             embed = discord.Embed(title="Anti-raid", description="Configure the anti-raid module.",
                                   color=discord.Colour.dark_blue())
-            embed.add_field(name="Enable or disable anti-raid", value="```./antiraid enable/disable```", inline=False)
+            embed.add_field(name="Enable or disable anti-raid", value=f"```{credentials['prefix']}antiraid enable/disable```", inline=False)
 
             embed.add_field(name="Anti-raid modes", value="".join(
                 ("There are two modes: passive, and active. In passive mode, Omni will",
                  " alert everyone with the kick members permission. Active mode will kick any new members"
                  " after anti-raid is triggered on top of alerting",
-                 "\n\nTo change the mode, use the following command```./antiraid mode passive/active```")),
+                 f"\n\nTo change the mode, use the following command```{credentials['prefix']}antiraid mode passive/active```")),
                             inline=False)
 
             embed.add_field(name="Rate limit",
                             value="Change the rate limit at which anti-raid will trigger at. The format is"
-                                  " `<new members>/<seconds>` ```./antiraid rate 2/4```",
+                                  f" `<new members>/<seconds>` ```{credentials['prefix']}antiraid rate 2/4```",
                             inline=False)
 
             embed.add_field(name="Action on anti-raid trigger",
-                            value="```./antiraid action kick/ban```Kicking due to profane nickname will kick regardless"
+                            value=f"```{credentials['prefix']}antiraid action kick/ban```Kicking due to profane nickname will kick regardless"
                                   " of this setting.",
                             inline=False)
 
             embed.add_field(name="Revoke all server invites on anti-raid trigger",
-                            value="```./antiraid revokeinvites enable/disable```",
+                            value=f"```{credentials['prefix']}antiraid revokeinvites enable/disable```",
                             inline=False)
 
             embed.add_field(name="Raise the server verification on anti-raid trigger",
-                            value="This will set the verification level to High if it is lower than that ```./antiraid"
+                            value=f"This will set the verification level to High if it is lower than that ```{credentials['prefix']}antiraid"
                                   " raiseverification enable/disable```",
                             inline=False)
             embed.add_field(name="Disallow new members with profane nicknames",
-                            value="```./antiraid banprofanenicks enable/disable```", inline=False)
+                            value=f"```{credentials['prefix']}antiraid banprofanenicks enable/disable```", inline=False)
 
             embed.add_field(name="Disallow new members with a specific phrase in their nickname",
-            value="```./antiraid add/remove <nickname>```Case insensitive", inline=False)
+            value=f"```{credentials['prefix']}antiraid add/remove <nickname>```Case insensitive", inline=False)
 
-            embed.add_field(name="Manually trigger anti-raid", value="```./antiraid trigger```")
-            embed.add_field(name="End anti-raid after triggering", value="```./antiraid end```")
-            embed.add_field(name="Show the current anti-raid configuration", value="```./antiraid show```")
+            embed.add_field(name="Manually trigger anti-raid", value=f"```{credentials['prefix']}antiraid trigger```")
+            embed.add_field(name="End anti-raid after triggering", value=f"```{credentials['prefix']}antiraid end```")
+            embed.add_field(name="Show the current anti-raid configuration", value=f"```{credentials['prefix']}antiraid show```")
 
             await ctx.send(embed=embed)
 
@@ -407,7 +409,7 @@ class moderation(commands.Cog):
                                                replace("!", "").replace(">", "").replace("@", "")))
 
                 if any(member.id == user.id for user in ctx.guild.members):
-                    msg = profanity.censor(ctx.message.content.replace(f"./modmail send {args[1]} ", ""), censor_char="\*")
+                    msg = profanity.censor(ctx.message.content.replace(f"{credentials['prefix']}modmail send {args[1]} ", ""), censor_char="\*")
 
                     embed = discord.Embed(title=f"New message from {ctx.guild.name}", description=msg,
                                           color=discord.Colour.dark_blue())
@@ -425,9 +427,9 @@ class moderation(commands.Cog):
         else:
             embed = discord.Embed(title="Modmail", color=discord.Colour.dark_blue())
             embed.add_field(name="Set up a modmail channel",
-                            value="```./modmail set``` in the channel you want to set as modmail.", inline=False)
+                            value=f"```{credentials['prefix']}modmail set``` in the channel you want to set as modmail.", inline=False)
             embed.add_field(name="Send/reply to modmail",
-                            value="```./modmail send <user id> <message>```All sent and"
+                            value=f"```{credentials['prefix']}modmail send <user id> <message>```All sent and"
                                   " received messages will be filtered from profanity.",
                             inline=False)
 
@@ -455,7 +457,9 @@ def syncdata():
 
 def setup(bot: commands.Bot):
     global botdata
+    global credentials
 
     bot.add_cog(moderation(bot))
     botdata = loadconfig()
+    credentials = json.load(open("data/credentials.json"))
     threading.Thread(target=syncdata).start()
