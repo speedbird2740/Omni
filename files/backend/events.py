@@ -580,11 +580,11 @@ class events(commands.Cog):
         yellow = discord.Colour.gold()
 
         if not ctx.author.bot:
-            if "cooldown" in strerror:
+            if isinstance(error, commands.errors.CommandOnCooldown):
                 await ctx.reply(embed=discord.Embed(description=f":warning: {error}", color=yellow), delete_after=5,
                                 mention_author=False)
 
-            if isinstance(error, commands.errors.MissingPermissions):
+            elif isinstance(error, commands.errors.MissingPermissions):
                 await ctx.reply(embed=discord.Embed(description=f":warning: {strerror}", color=yellow), delete_after=5,
                                 mention_author=False)
             elif isinstance(error, commands.errors.CommandNotFound):
