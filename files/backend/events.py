@@ -570,6 +570,7 @@ class events(commands.Cog):
         global blacklist
 
         strerror = str(error)
+        red = discord.Colour.red()
         yellow = discord.Colour.gold()
 
         if not ctx.author.bot:
@@ -578,18 +579,18 @@ class events(commands.Cog):
                                 mention_author=False)
 
             elif isinstance(error, commands.errors.MissingPermissions):
-                await ctx.reply(embed=discord.Embed(description=f":warning: {strerror}", color=yellow), delete_after=5,
+                await ctx.reply(embed=discord.Embed(description=f":x: {strerror}", color=red), delete_after=5,
                                 mention_author=False)
             elif isinstance(error, commands.errors.CommandNotFound):
                 await self.bot.get_cog("miscellaneous").help(ctx=ctx)
             elif isinstance(error, commands.errors.MissingRequiredArgument):
-                await ctx.reply(embed=discord.Embed(description=f":warning: {strerror}", color=yellow), delete_after=5,
+                await ctx.reply(embed=discord.Embed(description=f":x: {strerror}", color=red), delete_after=5,
                                 mention_author=False)
             elif isinstance(error, commands.errors.BadArgument):
-                await ctx.reply(embed=discord.Embed(description=f":warning: {strerror}", color=yellow), delete_after=5,
+                await ctx.reply(embed=discord.Embed(description=f":x: {strerror}", color=red), delete_after=5,
                                 mention_author=False)
             else:
-                await ctx.reply(embed=discord.Embed(description=f":warning: Internal error", color=yellow), delete_after=5,
+                await ctx.reply(embed=discord.Embed(description=f":x: Internal error", color=red), delete_after=5,
                                 mention_author=False)
 
                 await sleep(1)
