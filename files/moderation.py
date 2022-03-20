@@ -63,6 +63,8 @@ class moderation(commands.Cog):
                     f"{syntax}.mode": "active"
                 })
                 await ctx.send("Anti-raid set to active!")
+            else:
+                raise commands.errors.BadArgument(f'Invalid value "{value}"')
 
         elif setting == "rate":
             value = value.split("/")
@@ -94,6 +96,8 @@ class moderation(commands.Cog):
                     f"{syntax}.action": "ban"
                 })
                 await ctx.send("Action on anti-raid trigger set to ban!")
+            else:
+                raise commands.errors.BadArgument(f'Invalid value "{value}"')
 
         elif setting == "revokeinvites":
             if value == "enable":
@@ -106,6 +110,8 @@ class moderation(commands.Cog):
                     f"{syntax}.revokeinvites": False
                 })
                 await ctx.send("Disabled revoking invites on anti-raid trigger!")
+            else:
+                raise commands.errors.BadArgument(f'Invalid value "{value}"')
 
         elif setting == "raiseverification":
             if value == "enable":
@@ -118,6 +124,8 @@ class moderation(commands.Cog):
                     f"{syntax}.raiseverification": False
                 })
                 await ctx.send("Disabled raising server verification on anti-raid trigger!")
+            else:
+                raise commands.errors.BadArgument(f'Invalid value "{value}"')
 
         elif setting == "banprofanenicks":
             if value == "enable":
@@ -130,6 +138,8 @@ class moderation(commands.Cog):
                     f"{syntax}.banprofanenicks": False
                 })
                 await ctx.send("Disabled kicking new members with profane nicknames!")
+            else:
+                raise commands.errors.BadArgument(f'Invalid value "{value}"')
 
         elif setting == "add":
             if value.lower() not in raidconfig["blacklist"]:
@@ -229,7 +239,7 @@ class moderation(commands.Cog):
 
             await ctx.send(embed=embed)
 
-        else:
+        elif setting is None:
             embed = discord.Embed(title="Anti-raid", description="Configure the anti-raid module.",
                                   color=discord.Colour.dark_blue())
             embed.add_field(name="Enable or disable anti-raid", value=f"```{credentials['prefix']}antiraid enable/disable```", inline=False)
@@ -270,6 +280,9 @@ class moderation(commands.Cog):
             embed.add_field(name="Show the current anti-raid configuration", value=f"```{credentials['prefix']}antiraid show```")
 
             await ctx.send(embed=embed)
+
+        else:
+            raise commands.errors.BadArgument(f'Setting "{setting}" does not exist.')
 
     @commands.command(description="Audit your server for weak or dangerous role permissions and more.")
     @has_permissions(manage_guild=True)
@@ -423,6 +436,8 @@ class moderation(commands.Cog):
                         await ctx.send(f"Failed to send the message to {member.name}")
                 else:
                     await ctx.send("Cannot find user.")
+            else:
+                raise commands.errors.BadArgument(f'Invalid value "{action}"')
 
         else:
             embed = discord.Embed(title="Modmail", color=discord.Colour.dark_blue())

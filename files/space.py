@@ -244,10 +244,7 @@ class space(commands.Cog):
                                                       f"`{credentials['prefix']}spacex starlink <n>`. For example: `{credentials['prefix']}spacex starlink 500`",
                                           color=discord.Colour.dark_blue())
             else:
-                embed = discord.Embed(title="Endpoint not found", description=f'The endpoint "{endpoint}" does not '
-                                                                              f'exist. Please see `{credentials["prefix"]}spacex` for '
-                                                                              f'a list of endpoints.',
-                                      color=discord.Colour.gold())
+                raise commands.errors.BadArgument(f'Invalid endpoint "{endpoint}"')
 
         else:
             embed = discord.Embed(title="SpaceX", description="The following endpoints are available.",
