@@ -1,5 +1,6 @@
 import json
 import time
+from asyncio import sleep
 
 import discord
 from discord.ext import commands
@@ -31,7 +32,7 @@ class miscellaneous(commands.Cog):
         start = time.perf_counter()
         msg = await ctx.send(embed=embed)
         end = time.perf_counter()
-        time.sleep(1)
+        await sleep(1)
 
         total = ((end - start) * 1000) - ping
 
