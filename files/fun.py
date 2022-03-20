@@ -34,7 +34,6 @@ class fun(commands.Cog):
                 saveconfig({
                     "slapcount.append": [idhash, 1]
                 })
-                await sleep(1)
             else:
                 saveconfig({
                     "slapcount.add": [idhash, 1]
@@ -70,7 +69,6 @@ class fun(commands.Cog):
                 saveconfig({
                     "fightcount.append": [idhash, 1]
                 })
-                await sleep(1)
             else:
                 saveconfig({
                     "fightcount.add": [idhash, 1]
