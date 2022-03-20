@@ -80,6 +80,8 @@ class configuration(commands.Cog):
                                 f"guild.{hash}.config.someoneping": True
                             })
                             await ctx.send("@someone ping enabled for this server!")
+                        else:
+                            raise commands.errors.BadArgument(f'Invalid value "{value}"')
 
                     elif setting == "bot":
                         if value == "disable":
@@ -92,6 +94,8 @@ class configuration(commands.Cog):
                                 f"guild.{hash}.config.botenabled": True
                             })
                             await ctx.send("Bot enabled for this server!")
+                        else:
+                            raise commands.errors.BadArgument(f'Invalid value "{value}"')
 
                     elif setting == "greetings":
                         if value == "disable":
@@ -104,6 +108,8 @@ class configuration(commands.Cog):
                                 f"guild.{hash}.config.greetings": True
                             })
                             await ctx.send("Greetings enabled for this server!")
+                        else:
+                            raise commands.errors.BadArgument(f'Invalid value "{value}"')
 
                     elif setting == "filterprofanity":
                         if value == "disable":
@@ -116,6 +122,8 @@ class configuration(commands.Cog):
                                 f"guild.{hash}.config.filterprofanity": True
                             })
                             await ctx.send("Profanity filter enabled for this server!")
+                        else:
+                            raise commands.errors.BadArgument(f'Invalid value "{value}"')
 
                     elif setting == "deleteprofanity":
                         if value == "disable":
@@ -128,6 +136,8 @@ class configuration(commands.Cog):
                                 f"guild.{hash}.config.deleteprofanity": True
                             })
                             await ctx.send("Automatic deletion of profanity enabled for this server!")
+                        else:
+                            raise commands.errors.BadArgument(f'Invalid value "{value}"')
 
                     elif setting == "logchannel":
                         if value == "default":
@@ -144,9 +154,14 @@ class configuration(commands.Cog):
                             })
 
                             await ctx.send(f"Bot messages channel set to {channel.mention}!")
+                        else:
+                            raise commands.errors.BadArgument(f'Invalid value "{value}"')
+
+                    else:
+                        raise commands.errors.BadArgument(f'Setting "{setting}" does not exist.')
 
                 else:
-                    raise commands.errors.MissingPermissions(missing_perms=["manage messages"])
+                    raise commands.errors.MissingPermissions(missing_perms=["manage_messages"])
 
         else:
             embed = discord.Embed(title="Configuration", color=discord.Colour.dark_blue()).set_footer(
