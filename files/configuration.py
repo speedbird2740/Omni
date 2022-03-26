@@ -51,7 +51,7 @@ class configuration(commands.Cog):
                     deleteprofanity = "No"
 
                 if guildconfig["log_channel"] is None:
-                    log_channel = "Guild System Channel"
+                    log_channel = "Server System Channel"
                 else:
                     log_channel = self.bot.get_channel(guildconfig["log_channel"]).mention
 
@@ -150,7 +150,7 @@ class configuration(commands.Cog):
                                 f"guild.{hash}.config.log_channel": None
                             })
 
-                            await ctx.send("Bot messages channel set to guild system channel!")
+                            await ctx.send("Bot messages channel set to server system channel!")
 
                         elif channel is not None:
                             saveconfig({
@@ -180,7 +180,7 @@ class configuration(commands.Cog):
             embed.add_field(name="Enable or disable automatic deletion of profanity",
                             value=f"```{credentials['prefix']}config deleteprofanity enable/disable```", inline=False)
             embed.add_field(name="Set bot messages channel",
-                            value=f"```{credentials['prefix']}config logchannel <channel mention>```To set it to the guild system channel, use"
+                            value=f"```{credentials['prefix']}config logchannel <channel mention>```To set it to the server system channel, use"
                                   f"```{credentials['prefix']}config logchannel --default```")
             embed.add_field(name="Show general configuration",
                             value=f"```{credentials['prefix']}config show```")
