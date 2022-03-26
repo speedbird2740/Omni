@@ -130,7 +130,7 @@ class utility(commands.Cog):
                     await ctx.channel.send(f"AFK messages disabled in {ctx.channel.mention}")
 
             else:
-                await ctx.send(":x: You do not have enough permissions to use that parameter")
+                raise commands.errors.MissingPermissions(missing_perms=["manage_messages"])
 
         elif len(args) == 1:
             afkmsg = "afk"
