@@ -3,7 +3,7 @@
 
 
 ### listener(port: int) -> Listener
-Returns a multiplrocessing.Listener object (shortcut without 
+Returns a multiprocessing.Listener object (shortcut without 
 having to give an address and authkey)
 
 `port` must be a valid network port number.

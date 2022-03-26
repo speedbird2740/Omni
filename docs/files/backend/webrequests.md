@@ -15,5 +15,5 @@ useful data.
 
 
 ### spacex_data() -> dict
-Sends requests to NASA and SpaceX APIs and returns the responses
+Sends request to NASA and SpaceX APIs and returns the responses
 in two dictionaries.
