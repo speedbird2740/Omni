@@ -2,7 +2,6 @@ import json
 import random
 import re
 import threading
-from asyncio import sleep
 
 import discord
 import requests
