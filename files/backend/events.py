@@ -92,7 +92,8 @@ class events(commands.Cog):
 
                     if ctx.content.startswith("<@!BOT_ID>"):
                         await ctx.channel.send(
-                            embed=discord.Embed(description=f"fMy prefix is `{credentials['prefix']}`", color=discord.Colour.dark_blue()))
+                            embed=discord.Embed(description=f"fMy prefix is `{credentials['prefix']}`",
+                                                color=discord.Colour.dark_blue()))
 
                     if uidhash in botdata["afkmembers"]:
                         saveconfig({
@@ -195,7 +196,7 @@ class events(commands.Cog):
                         await ctx.channel.send("Note: I am disabled in this server")
                         await self.bot.process_commands(ctx)
 
-                    elif ctx.author.id == self.bot.owner_id and not globalconfig["botenabled"]\
+                    elif ctx.author.id == self.bot.owner_id and not globalconfig["botenabled"] \
                             and ctx.content.startswith({credentials['prefix']}):
 
                         await ctx.channel.send("Note: I am disabled globally")
@@ -274,6 +275,7 @@ class events(commands.Cog):
                             return True
                         else:
                             return False
+
                     try:
                         msg = await self.bot.wait_for(event="message", check=check, timeout=20)
                     except:
