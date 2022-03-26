@@ -140,15 +140,19 @@ class configuration(commands.Cog):
                             raise commands.errors.BadArgument(f'Invalid value "{value}"')
 
                     elif setting == "logchannel":
-                        if value == "default":
+                        try:
+                            channel = await commands.TextChannelConverter().convert(ctx, value)
+                        except:
+                            channel = None
+
+                        if value == "--default":
                             saveconfig({
                                 f"guild.{hash}.config.log_channel": None
                             })
 
                             await ctx.send("Bot messages channel set to guild system channel!")
-                        else:
-                            channel = await commands.TextChannelConverter().convert(ctx, value)
 
+                        elif channel is not None:
                             saveconfig({
                                 f"guild.{hash}.config.log_channel": channel.id
                             })
@@ -177,7 +181,7 @@ class configuration(commands.Cog):
                             value=f"```{credentials['prefix']}config deleteprofanity enable/disable```", inline=False)
             embed.add_field(name="Set bot messages channel",
                             value=f"```{credentials['prefix']}config logchannel <channel mention>```To set it to the guild system channel, use"
-                                  f"```{credentials['prefix']}config logchannel default```")
+                                  f"```{credentials['prefix']}config logchannel --default```")
             embed.add_field(name="Show general configuration",
                             value=f"```{credentials['prefix']}config show```")
             await ctx.send(embed=embed)
