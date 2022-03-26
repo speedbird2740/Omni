@@ -568,38 +568,34 @@ class events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
-        global botdata
-        global blacklist
-
         strerror = str(error)
         red = discord.Colour.red()
         yellow = discord.Colour.gold()
 
-        if not ctx.author.bot:
-            if isinstance(error, commands.errors.CommandOnCooldown):
-                await ctx.reply(embed=discord.Embed(description=f":warning: {error}", color=yellow), delete_after=5,
-                                mention_author=False)
+        if isinstance(error, commands.errors.CommandOnCooldown):
+            await ctx.reply(embed=discord.Embed(description=f":warning: {error}", color=yellow), delete_after=5,
+                            mention_author=False)
 
-            elif isinstance(error, commands.errors.MissingPermissions):
-                await ctx.reply(embed=discord.Embed(description=f":x: {strerror}", color=red), delete_after=5,
-                                mention_author=False)
-            elif isinstance(error, commands.errors.CommandNotFound):
-                await self.bot.get_cog("miscellaneous").help(ctx=ctx)
-            elif isinstance(error, commands.errors.MissingRequiredArgument):
-                await ctx.reply(embed=discord.Embed(description=f":x: {strerror}", color=red), delete_after=5,
-                                mention_author=False)
-            elif isinstance(error, commands.errors.BadArgument):
-                await ctx.reply(embed=discord.Embed(description=f":x: {strerror}", color=red), delete_after=5,
-                                mention_author=False)
-            else:
-                await ctx.reply(embed=discord.Embed(description=f":x: Internal error", color=red), delete_after=5,
-                                mention_author=False)
+        elif isinstance(error, commands.errors.MissingPermissions):
+            await ctx.reply(embed=discord.Embed(description=f":x: {strerror}", color=red), delete_after=5,
+                            mention_author=False)
+        elif isinstance(error, commands.errors.CommandNotFound):
+            await self.bot.get_cog("miscellaneous").help(ctx=ctx)
+        elif isinstance(error, commands.errors.MissingRequiredArgument):
+            await ctx.reply(embed=discord.Embed(description=f":x: {strerror}", color=red), delete_after=5,
+                            mention_author=False)
+        elif isinstance(error, commands.errors.BadArgument):
+            await ctx.reply(embed=discord.Embed(description=f":x: {strerror}", color=red), delete_after=5,
+                            mention_author=False)
+        else:
+            await ctx.reply(embed=discord.Embed(description=f":x: Internal error", color=red), delete_after=5,
+                            mention_author=False)
 
-                await sleep(1)
+            await sleep(1)
 
-                channel = self.bot.get_channel(credentials["log_channel"])
-                error = "".join(traceback.format_exception(type(error), error, error.__traceback__))
-                await channel.send(f"```python\n{error}```")
+            channel = self.bot.get_channel(credentials["log_channel"])
+            error = "".join(traceback.format_exception(type(error), error, error.__traceback__))
+            await channel.send(f"```python\n{error}```")
 
 
 def syncdata():
