@@ -236,13 +236,13 @@ class restricted(commands.Cog):
                     await msg.edit("Successfully reset all settings!")
 
             elif module == "exec":
-                code = ctx.message.content.replace("./admin exec ```py\n", "").replace("```", "")
+                code = ctx.message.content.replace(f"{credentials['prefix']}admin exec ```py\n", "").replace("```", "")
                 exec(code)
         else:
             await ctx.send(embed=discord.Embed(
                 description="Only the developer behind this bot can use this command."
                             " If you are a server admin or moderator, make sure you have the manage messages"
-                            " permission and use `./config` instead", color=discord.Colour.red()))
+                            f" permission and use `{credentials['prefix']}config` instead", color=discord.Colour.red()))
 
     @commands.command()
     async def update(self, ctx):
