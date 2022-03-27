@@ -150,8 +150,8 @@ class miscellaneous(commands.Cog):
         await ctx.send(embed=embed)
 
 
-def setup(bot: commands.Bot):
+async def setup(bot: commands.Bot):
     global credentials
 
     credentials = json.load(open("data/credentials.json"))
-    bot.add_cog(miscellaneous(bot))
+    await bot.add_cog(miscellaneous(bot))

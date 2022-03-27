@@ -28,7 +28,7 @@ class events(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.Cog.listener()
+    @commands.Cog.listener(name="test")
     async def on_message(self, ctx: discord.Message):
         global botdata
 
@@ -617,13 +617,14 @@ def syncdata():
             traceback.print_exc()
 
 
-def setup(bot: commands.Bot):
+async def setup(bot: commands.Bot):
     global botdata
     global credentials
 
+    await bot.add_cog(events(bot))
+
     threading.Thread(target=host).start()
     threading.Thread(target=syncdata).start()
-    bot.add_cog(events(bot))
 
     botdata = loadconfig()
     credentials = json.load(open("data/credentials.json"))
