@@ -156,7 +156,7 @@ class restricted(commands.Cog):
 
                     await ctx.send("Restarting...")
 
-                    subprocess.Popen(["python", "main.py"])
+                    subprocess.Popen([sys.executable, "main.py"])
                     saveconfig("close")
                     await sleep(5)
                     sys.exit()
