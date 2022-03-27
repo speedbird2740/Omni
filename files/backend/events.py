@@ -28,7 +28,7 @@ class events(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.Cog.listener(name="test")
+    @commands.Cog.listener()
     async def on_message(self, ctx: discord.Message):
         global botdata
 
