@@ -85,21 +85,19 @@ class miscellaneous(commands.Cog):
     async def changelog(self, ctx):
         msg = discord.Embed(title=f"Changelog for v{version}", color=discord.Colour.dark_blue())
         msg.add_field(name="New commands/features",
-                      value=f"**-** You can now set a separate bot messages channel. See `{credentials['prefix']}config` for more information.\n"
-                            "**-** The performance and reliability of anti-raid has been improved.\n"
-                            "**-** Revamped welcome message.",
+                      value=f"**-** Added errors if a command parameter is invalid.",
                       inline=False)
         msg.add_field(name="What's changed",
-                      value="**-** Removed a few unused settings.\n"
-                            "**-** To better deal with rate limiting, anti-raid will no longer log kicks/bans unless "
-                            "it was triggered by a blacklisted nickname or inappropriate nickname.")
+                      value=f"**-** `{credentials['prefix']}config logchannel default` is now `{credentials['prefix']}config logchannel --default`.")
         msg.add_field(name="What's fixed",
-                      value="**-**")
-        msg.add_field(name=f"Changelog for v12",
-                      value="**-** Completely reworked config/data sync and storage system.\n"
-                            f"**-** `{credentials['prefix']}showconfig` is now merged with "
-                            f"`{credentials['prefix']}config` (`{credentials['prefix']}config show`).\n"
-                            "**-** Mitigates error message when adding me to a server.",
+                      value="**-** Fixed an issue where you could not set the log channel to the Server System Channel.")
+        msg.add_field(name=f"Changelog for v12.1",
+                      value=f"**-** You can now set a separate bot messages channel. See `{credentials['prefix']}config` for more information.\n"
+                            "**-** The performance and reliability of anti-raid has been improved.\n"
+                            "**-** Revamped welcome message."
+                            "**-** Removed a few unused settings.\n"
+                            "**-** To better deal with rate limiting, anti-raid will no longer log kicks/bans unless "
+                            "it was triggered by a blacklisted nickname or inappropriate nickname.",
                       inline=False)
 
         await ctx.send(embed=msg)
