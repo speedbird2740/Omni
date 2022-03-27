@@ -24,7 +24,7 @@ bot = commands.Bot(command_prefix=credentials["prefix"], intents=intents, help_c
 bot.owner_id = credentials["owner_id"]
 api_key = credentials["api_key"]
 
-version = "12.1"
+version = "12.2"
 pingcooldown = []
 updatesuccess = True
 
