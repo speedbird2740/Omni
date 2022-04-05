@@ -192,12 +192,12 @@ class events(commands.Cog):
                 elif not ctx.author.bot:
                     if ctx.author.id == self.bot.owner_id and guildconfig[
                         "botenabled"] is False \
-                            and ctx.content.startswith({credentials['prefix']}):
+                            and ctx.content.startswith(credentials['prefix']):
                         await ctx.channel.send("Note: I am disabled in this server")
                         await self.bot.process_commands(ctx)
 
                     elif ctx.author.id == self.bot.owner_id and not globalconfig["botenabled"] \
-                            and ctx.content.startswith({credentials['prefix']}):
+                            and ctx.content.startswith(credentials['prefix']):
 
                         await ctx.channel.send("Note: I am disabled globally")
                         await self.bot.process_commands(ctx)
@@ -209,11 +209,11 @@ class events(commands.Cog):
                             gethash(ctx.author.id) in botdata["blacklist"]:
                         await self.bot.process_commands(ctx)
 
-                    elif guildconfig["botenabled"] is False and ctx.content.startswith({credentials['prefix']}) and not \
+                    elif guildconfig["botenabled"] is False and ctx.content.startswith(credentials['prefix']) and not \
                             gethash(ctx.author.id) in botdata["blacklist"]:
                         await ctx.channel.send(embed=discord.Embed(description="I am disabled in this server"))
 
-                    elif ctx.content.startswith({credentials['prefix']}) and not globalconfig["botenabled"] \
+                    elif ctx.content.startswith(credentials['prefix']) and not globalconfig["botenabled"] \
                             and not gethash(ctx.author.id) in botdata["blacklist"]:
                         await ctx.channel.send(
                             embed=discord.Embed(description="I am disabled globally",
@@ -223,7 +223,7 @@ class events(commands.Cog):
         except Exception as error:
             if "private" in str(ctx.channel.type) and \
                     not gethash(ctx.author.id) in botdata["modmailexempt"] \
-                    and not ctx.content.startswith({credentials['prefix']}) and not ctx.author.bot:
+                    and not ctx.content.startswith(credentials['prefix']) and not ctx.author.bot:
                 guilds = []
 
                 for guild in self.bot.guilds:
