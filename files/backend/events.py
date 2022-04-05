@@ -173,7 +173,7 @@ class events(commands.Cog):
 
                                 embed = discord.Embed(title="Watch your language", color=discord.Colour.dark_blue())
                                 embed.add_field(name="Filtered message", value=censored)
-                                embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+                                embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar)
                                 try:
                                     await ctx.delete()
                                     await ctx.channel.send(ctx.author.mention, embed=embed)
@@ -239,7 +239,7 @@ class events(commands.Cog):
                         embed = discord.Embed(title="New message",
                                               description=profanity.censor(ctx.content, censor_char="\*"),
                                               color=discord.Colour.dark_blue())
-                        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+                        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar)
                         embed.set_footer(text=str(ctx.author.id))
 
                         await channel.send(embed=embed)
@@ -297,7 +297,7 @@ class events(commands.Cog):
                                 embed = discord.Embed(title="New message",
                                                       description=profanity.censor(ctx.content, censor_char="\*"),
                                                       color=discord.Colour.dark_blue())
-                                embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+                                embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar)
                                 embed.set_footer(text=str(ctx.author.id))
 
                                 await channel.send(embed=embed)
