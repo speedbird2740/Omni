@@ -426,7 +426,7 @@ class moderation(commands.Cog):
 
                     embed = discord.Embed(title=f"New message from {ctx.guild.name}", description=msg,
                                           color=discord.Colour.dark_blue())
-                    embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+                    embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar)
                     embed.set_footer(text=str(ctx.author.id))
 
                     try:
