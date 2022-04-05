@@ -117,8 +117,6 @@ async def on_ready():
             except:
                 pass
 
-    await bot.get_channel(951163521985544264).send("Hello World!")
-
 
 @bot.event
 async def on_message(msg):
