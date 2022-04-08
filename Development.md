@@ -9,5 +9,5 @@ Omni will remain on discord.py. I, speedbird, am monitoring the development of d
 - Message buttons\*\*
 - Other improvements
 
-\*low priority
+\*low priority  
 \*\*depends on discord.py v2 release date
