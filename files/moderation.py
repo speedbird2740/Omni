@@ -426,7 +426,7 @@ class moderation(commands.Cog):
 
                     embed = discord.Embed(title=f"New message from {ctx.guild.name}", description=msg,
                                           color=discord.Colour.dark_blue())
-                    embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
+                    embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar)
                     embed.set_footer(text=str(ctx.author.id))
 
                     try:
@@ -470,11 +470,11 @@ def syncdata():
             pass
 
 
-def setup(bot: commands.Bot):
+async def setup(bot: commands.Bot):
     global botdata
     global credentials
 
-    bot.add_cog(moderation(bot))
+    await bot.add_cog(moderation(bot))
     botdata = loadconfig()
     credentials = json.load(open("data/credentials.json"))
     threading.Thread(target=syncdata).start()
