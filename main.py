@@ -19,7 +19,6 @@ credentials = json.load(open("data/credentials.json"))
 
 intents = discord.Intents.default()
 intents.members = True
-intents.message_content = True
 bot = commands.Bot(command_prefix=credentials["prefix"], intents=intents, help_command=None)
 
 bot.owner_id = credentials["owner_id"]
@@ -70,15 +69,6 @@ async def on_ready():
     global botdata
     global updatesuccess
 
-    await bot.add_cog(restricted(bot))
-    await bot.load_extension("files.backend.events")
-    await bot.load_extension("files.configuration")
-    await bot.load_extension("files.moderation")
-    await bot.load_extension("files.fun")
-    await bot.load_extension("files.space")
-    await bot.load_extension("files.utility")
-    await bot.load_extension("files.miscellaneous")
-
     print("Bot online")
 
     if os.path.exists("bot log.txt"):
@@ -116,6 +106,9 @@ async def on_ready():
                 })
             except:
                 pass
+
+        pid = os.getpid()
+        threading.Thread(target=backgroundtasks, args=(pid,)).start()
 
 
 @bot.event
@@ -492,6 +485,15 @@ if __name__ == "__main__":
     from files.backend.config_framework import listener, saveconfig, gethash, loadconfig, processdeltas
 
     botdata = loadconfig()
+
+    bot.add_cog(restricted(bot))
+    bot.load_extension("files.backend.events")
+    bot.load_extension("files.configuration")
+    bot.load_extension("files.moderation")
+    bot.load_extension("files.fun")
+    bot.load_extension("files.space")
+    bot.load_extension("files.utility")
+    bot.load_extension("files.miscellaneous")
     threading.Thread(target=syncdata).start()
 
     bot.run(api_key)

@@ -289,11 +289,11 @@ def syncdata(bot):
         time.sleep(5)
 
 
-async def setup(bot: commands.Bot):
+def setup(bot: commands.Bot):
     global botdata
     global credentials
 
-    await bot.add_cog(space(bot))
+    bot.add_cog(space(bot))
     botdata = loadconfig()
     credentials = json.load(open("data/credentials.json"))
     threading.Thread(target=syncdata, args=(bot,)).start()
